@@ -23,6 +23,9 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
 
     // Returns the `Example` at the given `index`.
     torch::data::Example<> get(size_t index) override;
+    
+    // Returns the `torch::Tensor`s for the data and targets of a batch  (at::ArrayRef)
+    // std::pair<torch::Tensor, torch::Tensor> get_batch(torch::ArrayRef<size_t> indices) override;
 
     // Returns the size of the dataset.
     torch::optional<size_t> size() const override;
