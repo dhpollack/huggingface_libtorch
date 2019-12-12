@@ -28,7 +28,7 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
     torch::optional<size_t> size() const override;
     
     // text to token_ids
-    virtual void t2id(std::string& s, sentencepiece::SentencePieceProcessor& sp);
+    virtual void t2id(std::string& s);
 
     // Returns all examples as a vector.
     const std::vector<std::pair<std::string, int64_t>>& examples() const;
