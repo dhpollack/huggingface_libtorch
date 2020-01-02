@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(huggingface-albert)
 
 # add the executable
-add_executable(huggingface-albert data_utils.cpp)
+add_executable(huggingface-albert run_model.cpp)
 
 # add sentencepiece
 find_library(SENTENCEPIECE_LIBRARY

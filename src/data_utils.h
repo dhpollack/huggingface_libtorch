@@ -5,9 +5,9 @@
 #include <torch/data/example.h>
 #include <torch/types.h>
 
-std::vector<std::pair<std::string, int64_t>> readCsvFile(const std::string& filepath);
+#include "transformer_example.h"
 
-//sentencepiece::SentencePieceProcessor loadSpModel(const std::string& modelpath);
+std::vector<std::pair<std::string, int64_t>> readCsvFile(const std::string& filepath);
 
 class SST2 : public torch::data::datasets::Dataset<SST2> {
  public:
@@ -18,7 +18,6 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
     //
     // The supplied `filepath` path should be a tsv file with the sentence followed 
     // by the label.  
-    //explicit CIFAR10(const std::string& root, Mode mode = Mode::kTrain);
     explicit SST2(const std::string& fp, const std::string& sp, const int msl);
 
     // Returns the `Example` at the given `index`.
@@ -43,6 +42,5 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
     std::vector<std::pair<std::string, int64_t>> examples_;
     std::shared_ptr<sentencepiece::SentencePieceProcessor> processor_;
     int msl_;  // maximum sequence length
-    //sentencepiece::SentencePieceProcessor processor_;
 };
 

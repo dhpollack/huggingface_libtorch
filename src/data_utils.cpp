@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "data_utils.h"
+#include "transformer_example.h"
 
 // 1. load tsv file with boost library
 // 2. load sentencepiece model
@@ -66,16 +67,28 @@ torch::data::Example<> SST2::get(size_t index) {
     // tensorize data
     std::vector<int> token_ids_raw;
     processor_->Encode(p.first, &token_ids_raw);
-    //int64_t data_size = token_ids_raw.size();
-    if (token_ids_raw.size() > msl_) {
-	token_ids_raw.resize(msl_);
-    }
-    torch::Tensor token_ids = torch::from_blob(token_ids_raw.data(), {msl_}, opts_data);
+    token_ids_raw.resize(msl_, 0);
+    int64_t data_size = token_ids_raw.size();
+    torch::Tensor token_ids = torch::from_blob(token_ids_raw.data(), {msl_}, opts_data).to(torch::kInt64);
+    // attention mask
+    std::vector<int> attention_mask_raw(data_size, 1);
+    attention_mask_raw.resize(msl_, 0);
+    torch::Tensor attention_mask = torch::from_blob(attention_mask_raw.data(), {msl_}, opts_data).to(torch::kInt64);
+    // token_type_ids
+    std::vector<int> token_type_ids_raw(data_size, 0);
+    token_type_ids_raw.resize(msl_, 1);
+    torch::Tensor token_type_ids = torch::from_blob(token_type_ids_raw.data(), {msl_}, opts_data).to(torch::kInt64);
+    // position ids
+    torch::Tensor position_ids = torch::arange(0, msl_, opts_data).to(torch::kInt64);
+    // stack data tensors
+    // TODO: figure out how to use a custom type instead of torch::data::Example
+    torch::Tensor ret_data = torch::stack({token_ids, attention_mask, token_type_ids, position_ids}, 0); 
     // tensorize label
     std::vector<int64_t> label_raw{p.second};
     int64_t label_size = label_raw.size();
-    torch::Tensor label = torch::from_blob(label_raw.data(), {label_size}, opts_tgt);
-    return {token_ids.to(torch::kInt64), label.to(torch::kInt64)};
+    torch::Tensor label = torch::from_blob(label_raw.data(), {label_size}, opts_tgt).to(torch::kInt64);
+    return {ret_data, 
+	    label};
 }
 // dataset size()
 torch::optional<size_t> SST2::size() const {
@@ -91,7 +104,7 @@ void SST2::t2id(std::string& s) {
     }
 }
 
-
+/* used for testing
 int main() {
     int MAXIMUM_SEQUENCE_LENGTH = 128;
     std::string fp = "/home/david/Programming/experiments/c++/huggingface_albert/data/SST-2/dev.tsv";
@@ -114,3 +127,4 @@ int main() {
 
     return(1);
 }
+*/
