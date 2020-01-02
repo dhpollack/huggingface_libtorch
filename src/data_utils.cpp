@@ -49,8 +49,8 @@ std::vector<std::pair<std::string, int64_t>> readCsvFile(const std::string& file
 
 }
 
-SST2::SST2(const std::string& fp, const std::string& sp) : examples_(readCsvFile(fp)) {
-    std::unique_ptr<sentencepiece::SentencePieceProcessor> tok_model(new sentencepiece::SentencePieceProcessor());
+SST2::SST2(const std::string& fp, const std::string& sp, const int msl) : examples_(readCsvFile(fp)), msl_(msl) {
+    std::shared_ptr<sentencepiece::SentencePieceProcessor> tok_model(new sentencepiece::SentencePieceProcessor());
     tok_model->LoadOrDie(sp);
     processor_ = std::move(tok_model);
 }
@@ -66,8 +66,11 @@ torch::data::Example<> SST2::get(size_t index) {
     // tensorize data
     std::vector<int> token_ids_raw;
     processor_->Encode(p.first, &token_ids_raw);
-    int64_t data_size = token_ids_raw.size();
-    torch::Tensor token_ids = torch::from_blob(token_ids_raw.data(), {data_size}, opts_data);
+    //int64_t data_size = token_ids_raw.size();
+    if (token_ids_raw.size() > msl_) {
+	token_ids_raw.resize(msl_);
+    }
+    torch::Tensor token_ids = torch::from_blob(token_ids_raw.data(), {msl_}, opts_data);
     // tensorize label
     std::vector<int64_t> label_raw{p.second};
     int64_t label_size = label_raw.size();
@@ -90,21 +93,23 @@ void SST2::t2id(std::string& s) {
 
 
 int main() {
+    int MAXIMUM_SEQUENCE_LENGTH = 128;
     std::string fp = "/home/david/Programming/experiments/c++/huggingface_albert/data/SST-2/dev.tsv";
     auto examples = readCsvFile(fp);
     // load sentencepiece model
     const std::string sp = "/home/david/Programming/experiments/c++/huggingface_albert/models/spiece.model";
     sentencepiece::SentencePieceProcessor processor;
     processor.LoadOrDie(sp);
-    auto ds = SST2(fp, sp);
-    auto item = ds.get(1);
-    std::cout << item.data << std::endl << item.target << std::endl;
-    /*
-    auto dl = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(std::move(ds),1);
-    for (auto& item : dl) {
-	
+    auto ds = SST2(fp, sp, MAXIMUM_SEQUENCE_LENGTH)
+	.map(torch::data::transforms::Stack<>());;
+    //auto item = ds.get(1);
+    //std::cout << item.data << std::endl << item.target << std::endl;
+    
+    auto dl = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(std::move(ds),2);
+    
+    for (auto& mb : *dl) {
+	std::cout << "Batch Size: " << mb.data.size(0) << ", " << mb.data.size(1) << std::endl;
     }
-    */
 
 
     return(1);

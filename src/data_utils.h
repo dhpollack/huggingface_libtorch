@@ -19,7 +19,7 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
     // The supplied `filepath` path should be a tsv file with the sentence followed 
     // by the label.  
     //explicit CIFAR10(const std::string& root, Mode mode = Mode::kTrain);
-    explicit SST2(const std::string& fp, const std::string& sp);
+    explicit SST2(const std::string& fp, const std::string& sp, const int msl);
 
     // Returns the `Example` at the given `index`.
     torch::data::Example<> get(size_t index) override;
@@ -41,7 +41,8 @@ class SST2 : public torch::data::datasets::Dataset<SST2> {
 
  private:
     std::vector<std::pair<std::string, int64_t>> examples_;
-    std::unique_ptr<sentencepiece::SentencePieceProcessor> processor_;
+    std::shared_ptr<sentencepiece::SentencePieceProcessor> processor_;
+    int msl_;  // maximum sequence length
     //sentencepiece::SentencePieceProcessor processor_;
 };
 
