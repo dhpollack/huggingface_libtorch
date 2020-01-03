@@ -39,3 +39,4 @@
 # build folder and temporary testing folder
 build/
 tmp/
+third_party/*
