@@ -67,8 +67,11 @@ torch::data::Example<> SST2::get(size_t index) {
     // tensorize data
     std::vector<int> token_ids_raw;
     processor_->Encode(p.first, &token_ids_raw);
-    token_ids_raw.resize(msl_, 0);
+    token_ids_raw.insert(token_ids_raw.begin(), 2);
+    // TODO: check length of token_ids_raw then trim if needed then add EOS
+    token_ids_raw.push_back(3);
     int64_t data_size = token_ids_raw.size();
+    token_ids_raw.resize(msl_, 0);
     torch::Tensor token_ids = torch::from_blob(token_ids_raw.data(), {msl_}, opts_data).to(torch::kInt64);
     // attention mask
     std::vector<int> attention_mask_raw(data_size, 1);

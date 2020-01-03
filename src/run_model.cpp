@@ -15,17 +15,18 @@ int main() {
     int MAXIMUM_SEQUENCE_LENGTH = 128;
     int BATCH_SIZE = 64;
     // read examples
-    std::string fp = "/home/david/Programming/experiments/c++/huggingface_albert/data/SST-2/dev-small.tsv";
+    std::string fp = "../data/SST-2/dev.tsv";
     auto examples = readCsvFile(fp);
     // load sentencepiece model
-    const std::string sp = "/home/david/Programming/experiments/c++/huggingface_albert/models/spiece.model";
+    const std::string sp = "../models/sst2_trained/spiece.model";
     sentencepiece::SentencePieceProcessor processor;
     processor.LoadOrDie(sp);
+    // create dataset and dataloader
     auto ds = SST2(fp, sp, MAXIMUM_SEQUENCE_LENGTH)
 	.map(torch::data::transforms::Stack<>());; 
     auto dl = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(std::move(ds), BATCH_SIZE);
     // load albert model and put into eval mode
-    std::string model_path = "/home/david/Programming/experiments/c++/huggingface_albert/models/traced_albert.pt";
+    std::string model_path = "../models/traced_albert.pt";
     torch::jit::script::Module model;
     try {
 	model = torch::jit::load(model_path);
