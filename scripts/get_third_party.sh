@@ -14,8 +14,10 @@ echo "sudo apt-get install cmake build-essential pkg-config libgoogle-perftools-
 git clone $SENTENCEPIECEURI
 cd sentencepiece
 mkdir -p build && cd build
-cmake ..
+cmake -DCMAKE_INSTALL_PREFIX=$(realpath ../../sp) ..
 make -j $(nproc --ignore=1)
+make install
+
 
 echo "installing cpu-libtorch, if you want the CUDA version it's available at https://pytorch.org"
 cd ../..
