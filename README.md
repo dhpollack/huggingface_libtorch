@@ -7,11 +7,11 @@ For now, I am using python to trace [huggingface transformers](https://github.co
 ```
 # first install transformers and sentencepiece
 mkdir models && cd models
-wget https://s3.amazonaws.com/models.huggingface.co/bert/albert-base-v2-spiece.model -O spiece.model
+wget https://s3.amazonaws.com/models.huggingface.co/bert/albert-base-spiece.model -O spiece.model
 python
 # in python repl
 import torch, transformers
-tokenizer = transformers.AutoTokenizer.from_pretrained("albert-base-v2")
+tokenizer = transformers.AutoTokenizer.from_pretrained("albert-base")
 tokens = tokenizer.encode("this is a test", add_special_tokens=True, return_tensors="pt").flatten()
 tokens_len = tokens.size(0)
 token_ids = torch.zeros(128, dtype=torch.long)
@@ -20,8 +20,9 @@ token_ids.unsqueeze_(0)
 attention_mask = torch.ones(128, dtype=torch.long)
 attention_mask[:tokens_len] = 0
 attention_mask.unsqueeze_(0)
-dummy_input = [token_ids, attention_mask]
-model = transformers.AutoModel.from_pretrained("albert-base-v2", torchscript=True)
+token_type_ids = (attention_mask == 0).to(torch.long)
+dummy_input = [token_ids, attention_mask, token_type_ids]
+model = transformers.AlbertForSequenceClassification.from_pretrained("albert-base", torchscript=True)
 traced_model = torch.jit.trace(model, dummy_input)
 torch.jit.save(traced_model, "traced_albert.pt")
 # exit python repl
