@@ -36,7 +36,11 @@
 *.bin
 *.pt
 
-# build folder and temporary testing folder
+# build folder, temporary testing, third party libraries and data
 build/
 tmp/
+data/
 third_party/*
+
+# dev environmental variables
+dev.env

@@ -3,9 +3,9 @@
 # stackoverflow seems to think there are better ways of doing the following
 cd $(dirname $0)/..
 
-SST2URI=http://nlp.stanford.edu/~socherr/stanfordSentimentTreebank.zip
+GLUEDLURI=https://raw.githubusercontent.com/nyu-mll/GLUE-baselines/master/download_glue_data.py
 
-mkdir -p data/SST-2 && cd data/SST-2
-wget $SST2URI -O sst2.zip
-unzip sst2.zip
-
+mkdir -p data && cd data
+wget $GLUEDLURI
+python download_glue_data.py --data_dir . --tasks SST
+rm download_glue_data.py

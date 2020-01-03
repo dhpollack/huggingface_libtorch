@@ -17,13 +17,18 @@ mkdir -p build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=$(realpath ../../sp) ..
 make -j $(nproc --ignore=1)
 make install
+# cleaning up
+cd ../..
+rm -Rf sentencepiece
 
 
 echo "installing cpu-libtorch, if you want the CUDA version it's available at https://pytorch.org"
-cd ../..
 wget $LIBTORCHURI -O libtorch.zip
 unzip libtorch.zip
+rm libtorch.zip
 
 echo "installing boost"
 wget $BOOSTURI -O boost.tar.gz
 tar xzf boost.tar.gz
+rm boost.tar.gz
+

@@ -29,11 +29,12 @@ torch.jit.save(traced_model, "traced_albert.pt")
 
 ## Install
 
+You can either run `scripts/get_third_party.sh` to install the required libraries or edit the compile.env to point to local version of the library.  I was not able to test using a local copy of boost, but in theory it should work.
+
 ```
-# edit compile.env with location of sentencepiece library and libtorch
 source compile.env
 mkdir build && cd build
-cmake ../src  # change this to the basedir
+cmake ..
 make
 ```
 
