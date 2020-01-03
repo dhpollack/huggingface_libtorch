@@ -4,6 +4,8 @@
 
 For now, I am using python to trace [huggingface transformers](https://github.com/huggingface/transformers) model with jit and then load that traced model into this script.  I have also installed [sentencepiece](https://github.com/google/sentencepiece) from source.  Also I am just downloading the sentencepiece model manually and loading it directly.  There are a few things that I would like to do in the future, but as a start, this is what I did to get this working.
 
+[download trained albert model](https://drive.google.com/open?id=1Hys6cWk6Kdw-4LGnZceto2uK7SIsYKIb) and unzip it somewhere (I put it in the `models` folder).
+
 ```
 # first install transformers and sentencepiece
 mkdir models && cd models
@@ -11,7 +13,8 @@ wget https://s3.amazonaws.com/models.huggingface.co/bert/albert-base-spiece.mode
 python
 # in python repl
 import torch, transformers
-tokenizer = transformers.AutoTokenizer.from_pretrained("albert-base")
+sst2_trained_model_path = "/path/to/sst2_trained"
+tokenizer = transformers.AutoTokenizer.from_pretrained(sst2_trained_model_path)
 tokens = tokenizer.encode("this is a test", add_special_tokens=True, return_tensors="pt").flatten()
 tokens_len = tokens.size(0)
 token_ids = torch.zeros(128, dtype=torch.long)
@@ -22,7 +25,7 @@ attention_mask[:tokens_len] = 0
 attention_mask.unsqueeze_(0)
 token_type_ids = (attention_mask == 0).to(torch.long)
 dummy_input = [token_ids, attention_mask, token_type_ids]
-model = transformers.AlbertForSequenceClassification.from_pretrained("albert-base", torchscript=True)
+model = transformers.AlbertForSequenceClassification.from_pretrained(sst2_trained_model_path, torchscript=True)
 traced_model = torch.jit.trace(model, dummy_input)
 torch.jit.save(traced_model, "traced_albert.pt")
 # exit python repl
@@ -40,6 +43,8 @@ make
 ```
 
 ## run
+currently, I am getting about 60% accuracy on the dev set, but I should be getting around 85%.
+
 ```
 ./huggingface-albert
 ```
