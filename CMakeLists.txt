@@ -9,10 +9,11 @@ set(HEADER_FILES
     src/data_utils.h)
 
 set(SOURCE_FILES
-    src/data_utils.cpp)
+    src/data_utils.cpp
+    src/run_model.cpp)
 
 # add the executable
-add_executable(huggingface-albert src/run_model.cpp)
+add_executable(huggingface-albert ${SOURCE_FILES})
 
 if (DEFINED ENV{SENTENCEPIECE_ROOT})
     set(SENTENCEPIECE_ROOT $ENV{SENTENCEPIECE_ROOT})

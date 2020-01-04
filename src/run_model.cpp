@@ -1,3 +1,4 @@
+#include <torch/torch.h>
 #include <torch/script.h>
 #include <sentencepiece_processor.h>
 
@@ -8,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "data_utils.cpp"
+#include "data_utils.h"
 
 using namespace std;
 
