@@ -4,7 +4,7 @@ import transformers
 
 basedir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sst2_trained_model_path = os.path.join(basedir, "models", "sst2_trained")
-output_path = os.path.join(basedir, "models", "traced_albert.pt")
+output_path = os.path.join(sst2_trained_model_path, "traced_albert.pt")
 print(basedir)
 tokenizer = transformers.AutoTokenizer.from_pretrained(sst2_trained_model_path)
 tokens = tokenizer.encode("this is a test", add_special_tokens=True, return_tensors="pt").flatten()
