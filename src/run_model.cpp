@@ -76,10 +76,10 @@ int main(int argc, char *argv[]) {
     auto token_type_ids = torch::select(mb.data, 1, 2);
     auto position_ids = torch::select(mb.data, 1, 3);
     vector<torch::jit::IValue> inputs;
-    inputs.push_back(token_ids);
-    inputs.push_back(attention_masks);
-    inputs.push_back(token_type_ids);
-    inputs.push_back(position_ids);
+    inputs.push_back(token_ids.to(device));
+    inputs.push_back(attention_masks.to(device));
+    inputs.push_back(token_type_ids.to(device));
+    inputs.push_back(position_ids.to(device));
     auto out = model.forward(inputs).toTuple();
     preds_vec.push_back(out->elements()[0].toTensor().to(torch::Device("cpu")));
     // cout << "Output: " << out->elements()[0].toTensor() << endl;
