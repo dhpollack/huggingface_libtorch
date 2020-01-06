@@ -4,7 +4,7 @@
 
 For now, I am using python to trace [huggingface transformers](https://github.com/huggingface/transformers) model with jit and then load that traced model into this script.  I have also installed [sentencepiece](https://github.com/google/sentencepiece) from source.  Also I am just downloading the sentencepiece model manually and loading it directly.  There are a few things that I would like to do in the future, but as a start, this is what I did to get this working.
 
-[download trained albert model](https://drive.google.com/open?id=1Hys6cWk6Kdw-4LGnZceto2uK7SIsYKIb) and unzip it somewhere (I put it in the `models` folder).
+[download trained albert model](https://drive.google.com/open?id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0) and unzip it somewhere (I put it in the `models` folder).
 
 ```
 # get the data
