@@ -32,3 +32,10 @@ currently, gets 89.2325% accuracy on the dev set vs. 89.2201% last reported by t
 ```
 ./huggingface-albert
 ```
+
+## too lazy to install...
+
+[colab notebook with GPU](https://colab.research.google.com/drive/1TFZbXhiGBtcWVH3ir9Hb1gLGcJyxzTNS)
+
+You should be able to run this repo from colab with the above link.  I also downloaded the CUDA version of libtorch there.
+
