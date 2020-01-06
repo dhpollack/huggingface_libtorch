@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   // set some variables
   int MAXIMUM_SEQUENCE_LENGTH = 128;
   int BATCH_SIZE = 64;
-
+  torch::Device device(torch::cuda::is_available() ? "cuda" : "cpu");
   // read examples
   string fp(argv[2]);
   auto examples = readCsvFile(fp);
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   // load albert model and put into eval mode
   torch::jit::script::Module model;
   try {
-    model = torch::jit::load(traced_model_path);
+    model = torch::jit::load(traced_model_path, device);
   } catch (const c10::Error &e) {
     cerr << "error loading the model" << endl;
     return -1;
@@ -69,6 +69,8 @@ int main(int argc, char *argv[]) {
     cout << "Batch Size: " << mb.data.size(0) << ", " << mb.data.size(1)
          << endl;
     labels_vec.push_back(mb.target);
+    mb.data.to(device);
+    mb.target.to(device);
     auto token_ids = torch::select(mb.data, 1, 0);
     auto attention_masks = torch::select(mb.data, 1, 1);
     auto token_type_ids = torch::select(mb.data, 1, 2);
@@ -77,7 +79,7 @@ int main(int argc, char *argv[]) {
     inputs.push_back(attention_masks);
     inputs.push_back(token_type_ids);
     auto out = model.forward(inputs).toTuple();
-    preds_vec.push_back(out->elements()[0].toTensor());
+    preds_vec.push_back(out->elements()[0].toTensor().to(torch::Device("cpu")));
     // cout << "Output: " << out->elements()[0].toTensor() << endl;
   }
   torch::Tensor preds = torch::cat(preds_vec, 0).argmax(1);
