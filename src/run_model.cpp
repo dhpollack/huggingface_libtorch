@@ -69,8 +69,6 @@ int main(int argc, char *argv[]) {
     cout << "Batch Size: " << mb.data.size(0) << ", " << mb.data.size(1)
          << endl;
     labels_vec.push_back(mb.target);
-    mb.data.to(device);
-    mb.target.to(device);
     auto token_ids = torch::select(mb.data, 1, 0);
     auto attention_masks = torch::select(mb.data, 1, 1);
     auto token_type_ids = torch::select(mb.data, 1, 2);
