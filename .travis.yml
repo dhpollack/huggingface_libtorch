@@ -6,13 +6,6 @@ compiler: gcc
 before_install:
     - sudo apt-get update
     - sudo apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip
-      #- curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
-      #- chmod +x /tmp/miniconda.sh
-      #- /tmp/miniconda.sh -b -p ~/miniconda3
-      #- ~/miniconda3/bin/conda install -y python=3.7 numpy
-      #- ~/miniconda3/bin/conda install -y -c pytorch pytorch
-      #- export PATH $(realpath ~/miniconda3/conda/bin):$PATH
-      #- pip install transformers
 
 before_script:
     - alias python='python3'
@@ -28,3 +21,16 @@ script:
 
 after_success:
     - ./huggingface-albert
+    - wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O ../models/sst2_trained.tar.gz && rm -rf /tmp/cookies.txt
+    - curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+    - chmod +x /tmp/miniconda.sh
+    - /tmp/miniconda.sh -b -p ~/miniconda3
+    - ~/miniconda3/bin/conda install -y python=3.7 numpy
+    - ~/miniconda3/bin/conda install -y -c pytorch pytorch
+    - export PATH $(realpath ~/miniconda3/conda/bin):$PATH
+    - pip install transformers
+    - cd ../models && tar xzvf sst2_trained.tar.gz && cd ..
+    - python scripts/trace_albert.py
+    - cd build
+    - head -n 100 ../data/SST-2/dev.tsv > ../data/SST-2/dev-small.tsv
+    - ./huggingface-albert ../models/sst2_trained ../data/SST-2/dev-small.tsv 
