@@ -8,6 +8,7 @@ before_install:
     - sudo apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip
 
 before_script:
+    - mkdir models
     - alias python='python3'
     - scripts/get_data.sh
     - scripts/get_third_party.sh
