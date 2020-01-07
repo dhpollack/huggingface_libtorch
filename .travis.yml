@@ -1,0 +1,29 @@
+language: cpp
+dist: bionic
+
+compiler: gcc
+
+before_install:
+    - sudo apt-get update
+    - sudo apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip
+      #- curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+      #- chmod +x /tmp/miniconda.sh
+      #- /tmp/miniconda.sh -b -p ~/miniconda3
+      #- ~/miniconda3/bin/conda install -y python=3.7 numpy
+      #- ~/miniconda3/bin/conda install -y -c pytorch pytorch
+      #- export PATH $(realpath ~/miniconda3/conda/bin):$PATH
+      #- pip install transformers
+
+before_script:
+    - alias python='python3'
+    - scripts/get_data.sh
+    - scripts/get_third_party.sh
+    - mkdir build
+    - cd build
+    - cmake ..
+
+script: 
+    - make
+
+after_success:
+    - ./huggingface-albert

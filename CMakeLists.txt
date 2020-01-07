@@ -15,18 +15,23 @@ set(SOURCE_FILES
 # add the executable
 add_executable(huggingface-albert ${SOURCE_FILES})
 
+# add sentencepiece, consider making this a Find*.cmake file
 if (DEFINED ENV{SENTENCEPIECE_ROOT})
     set(SENTENCEPIECE_ROOT $ENV{SENTENCEPIECE_ROOT})
 else()
     set(SENTENCEPIECE_ROOT ${PROJECT_SOURCE_DIR}/third_party/sp)
 endif()
-
 find_library(SENTENCEPIECE_LIBRARIES
-    NAMES sentencepiece libsentencepiece libsentencepiece_train
+    NAMES sentencepiece libsentencepiece
     HINTS "${SENTENCEPIECE_ROOT}/lib")
 set(SENTENCEPIECE_INCLUDE_DIRS ${SENTENCEPIECE_ROOT}/include)
 include_directories(${SENTENCEPIECE_INCLUDE_DIRS})
 target_link_libraries(huggingface-albert "${SENTENCEPIECE_LIBRARIES}")
+# alternative method but apparently required pkg-config which isn't always available
+#set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${SENTENCEPIECE_ROOT}/lib/pkgconfig")
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(SENTENCEPIECE REQUIRED sentencepiece)
+#target_link_libraries(huggingface-albert "${SENTENCEPIECE_LINK_LIBRARIES})
 
 # add boost tokenizer, which is header only so no components needed to be specified 
 # https://stackoverflow.com/questions/6646405/how-do-you-add-boost-libraries-in-cmakelists-txt
@@ -36,5 +41,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 # add torch
 find_package(Torch REQUIRED)
 target_link_libraries(huggingface-albert "${TORCH_LIBRARIES}")
-set_property(TARGET huggingface-albert PROPERTY CXX_STANDARD 11)
+set_property(TARGET huggingface-albert PROPERTY CXX_STANDARD 14)
 
