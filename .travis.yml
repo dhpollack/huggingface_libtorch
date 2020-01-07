@@ -18,6 +18,7 @@ before_script:
     - alias python='python3'
     - scripts/get_data.sh
     - scripts/get_third_party.sh
+    - source compile.env
     - mkdir build
     - cd build
     - cmake ..
