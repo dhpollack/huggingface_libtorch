@@ -1,5 +1,7 @@
 # Libtorch + Huggingface Transformers
 
+[![Build Status](https://travis-ci.org/dhpollack/huggingface_libtorch.svg?branch=master)](https://travis-ci.org/dhpollack/huggingface_libtorch)
+
 ## Requirements
 
 For now, I am using python to trace [huggingface transformers](https://github.com/huggingface/transformers) model with jit and then load that traced model into this script.  I have also installed [sentencepiece](https://github.com/google/sentencepiece) from source.  Also I am just downloading the sentencepiece model manually and loading it directly.  There are a few things that I would like to do in the future, but as a start, this is what I did to get this working.
