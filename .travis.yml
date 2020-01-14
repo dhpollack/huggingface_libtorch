@@ -5,7 +5,7 @@ compiler: gcc
 
 addons:
   apt:
-    packages: cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip libgtest-dev
+    packages: cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip libgtest-dev nlohmann-json-dev
 
 before_script:
     - mkdir build_gtest && cd build_gtest
