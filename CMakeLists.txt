@@ -56,6 +56,6 @@ target_link_libraries(huggingface-albert "${TORCH_LIBRARIES}")
 set_property(TARGET huggingface-albert PROPERTY CXX_STANDARD 14)
 
 # add nlohmann json
-find_package(nlohmann_json REQUIRED)
+find_package(nlohmann_json PATHS "${PROJECT_SOURCE_DIR}/third_party/local"  REQUIRED)
 target_link_libraries(huggingface-albert nlohmann_json::nlohmann_json)
 
