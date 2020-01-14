@@ -42,6 +42,11 @@ int main(int argc, char *argv[]) {
   // read examples
   string fp(argv[2]);
   auto examples = readCsvFile(fp);
+  if (examples.size() == 1) {
+    std::cerr << "found 0 examples in the file: " << argv[2] << endl;
+    return -1;
+  }
+
   // create dataset and dataloader
   auto ds = SST2(fp, sentencepiece_model_path, MAXIMUM_SEQUENCE_LENGTH)
                 .map(torch::data::transforms::Stack<>());
@@ -66,8 +71,7 @@ int main(int argc, char *argv[]) {
   vector<torch::Tensor> preds_vec;
   vector<torch::Tensor> labels_vec;
   for (auto &mb : *dl) {
-    cout << "Batch Size: " << mb.data.size(0) << ", " << mb.data.size(1)
-         << endl;
+    cout << "Batch Size: " << mb.data.sizes() << endl;
     labels_vec.push_back(mb.target);
     auto token_ids = torch::select(mb.data, 1, 0);
     auto attention_masks = torch::select(mb.data, 1, 1);
@@ -87,5 +91,5 @@ int main(int argc, char *argv[]) {
   float correct = preds.eq(labels).sum().item<float>();
   float total = preds.size(0);
   cout << "Acc: " << correct / total << endl;
-  return (1);
+  return 1;
 }

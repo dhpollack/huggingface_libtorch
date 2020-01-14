@@ -18,35 +18,36 @@
 
 std::vector<std::pair<std::string, int64_t>>
 readCsvFile(const std::string &filepath) {
-  std::ifstream ifs(filepath);
-  if (!ifs.is_open()) {
-    // TODO: throw error or empty result
-  }
+  // This function assumes the csv file is in the format `<sentence>\t<label>`
   std::vector<std::string> sentences;
   std::vector<int64_t> labels;
   std::vector<std::pair<std::string, int64_t>> examples;
   std::string line;
   std::pair<std::string, int64_t> p;
+  std::ifstream ifs(filepath);
+  if (!ifs.is_open()) {
+    return examples;
+  }
   typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
   boost::char_separator<char> sep("\t");
   while (std::getline(ifs, line)) {
     tokenizer tokens(line, sep);
     tokenizer::iterator tok_iter = tokens.begin();
-    p.first = *tok_iter;
+    std::string sentence = *tok_iter;
+    p.first = sentence;
     ++tok_iter;
-    int64_t i = 0;
-    std::stringstream i_str(*tok_iter);
-    i_str >> i;
-    p.second = i;
+    int64_t label = 0;
+    std::istringstream i_str(*tok_iter);
+    if (!(i_str >> label)) {
+      // this should exclude the header of the csv
+      //std::cout << "found invalid example: " << line << std::endl;
+      continue;
+    }
+    p.second = label;
     examples.push_back(p);
     sentences.push_back(p.first);
     labels.push_back(p.second);
   }
-  /* testing code to print out examples
-  for (auto x = examples.begin(); x != examples.end(); ++x) {
-      std::cout << x->first << " | " << x->second << std::endl;
-  }
-  */
   return examples;
 }
 
@@ -116,31 +117,3 @@ void SST2::t2id(std::string &s) {
   }
 }
 
-/* used for testing
-int main() {
-    int MAXIMUM_SEQUENCE_LENGTH = 128;
-    std::string fp =
-"/home/david/Programming/experiments/c++/huggingface_albert/data/SST-2/dev.tsv";
-    auto examples = readCsvFile(fp);
-    // load sentencepiece model
-    const std::string sp =
-"/home/david/Programming/experiments/c++/huggingface_albert/models/spiece.model";
-    sentencepiece::SentencePieceProcessor processor;
-    processor.LoadOrDie(sp);
-    auto ds = SST2(fp, sp, MAXIMUM_SEQUENCE_LENGTH)
-        .map(torch::data::transforms::Stack<>());;
-    //auto item = ds.get(1);
-    //std::cout << item.data << std::endl << item.target << std::endl;
-
-    auto dl =
-torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(std::move(ds),2);
-
-    for (auto& mb : *dl) {
-        std::cout << "Batch Size: " << mb.data.size(0) << ", " <<
-mb.data.size(1) << std::endl;
-    }
-
-
-    return(1);
-}
-*/

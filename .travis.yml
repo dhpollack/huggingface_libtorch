@@ -3,11 +3,15 @@ dist: bionic
 
 compiler: gcc
 
-before_install:
-    - sudo apt-get update
-    - sudo apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip
+addons:
+  apt:
+    packages: cmake build-essential pkg-config libgoogle-perftools-dev libboost-all-dev wget unzip libgtest-dev
 
 before_script:
+    - mkdir build_gtest && cd build_gtest
+    - cmake /usr/src/gtest && make && sudo make install
+    - cd ..
+    - rm -Rf build_gtest
     - mkdir models
     - alias python='python3'
     - scripts/get_data.sh
@@ -15,7 +19,7 @@ before_script:
     - source compile.env
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -DBUILD_TEST=ON -DCMAKE_BUILD_TYPE=Debug ..
 
 script: 
     - make
@@ -35,3 +39,4 @@ after_success:
     - cd build
     - head -n 100 ../data/SST-2/dev.tsv > ../data/SST-2/dev-small.tsv
     - ./huggingface-albert ../models/sst2_trained ../data/SST-2/dev-small.tsv 
+    - ctest -VV

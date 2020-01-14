@@ -5,12 +5,24 @@ cmake_policy(SET CMP0074 NEW)
 # set the project name
 project(huggingface-albert)
 
+# tests
+option(BUILD_TEST "Build c++ tests" OFF)
+if (BUILD_TEST)
+  enable_testing()
+  include(GoogleTest)
+  add_subdirectory(test)
+endif()
+
 set(HEADER_FILES
-    src/data_utils.h)
+    src/data_utils.h
+    src/squad_utils.h
+    )
 
 set(SOURCE_FILES
     src/data_utils.cpp
-    src/run_model.cpp)
+    src/run_model.cpp
+    #src/squad_utils.cpp
+    )
 
 # add the executable
 add_executable(huggingface-albert ${SOURCE_FILES})
@@ -42,4 +54,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 find_package(Torch REQUIRED)
 target_link_libraries(huggingface-albert "${TORCH_LIBRARIES}")
 set_property(TARGET huggingface-albert PROPERTY CXX_STANDARD 14)
+
+# add nlohmann json
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(huggingface-albert nlohmann_json::nlohmann_json)
 
