@@ -26,7 +26,7 @@ rm -Rf sentencepiece
 
 echo "installing cpu-libtorch, if you want the CUDA version it's available at https://pytorch.org"
 wget $LIBTORCHURI -O libtorch.zip
-unzip libtorch.zip
+unzip -qq libtorch.zip
 rm libtorch.zip
 
 echo "installing nlohmann json..."
