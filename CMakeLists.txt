@@ -31,10 +31,11 @@ add_executable(huggingface-albert ${SOURCE_FILES})
 if (DEFINED ENV{SENTENCEPIECE_ROOT})
     set(SENTENCEPIECE_ROOT $ENV{SENTENCEPIECE_ROOT})
 else()
-    set(SENTENCEPIECE_ROOT ${PROJECT_SOURCE_DIR}/third_party/sp)
+    set(SENTENCEPIECE_ROOT ${PROJECT_SOURCE_DIR}/third_party/local)
 endif()
 find_library(SENTENCEPIECE_LIBRARIES
     NAMES sentencepiece libsentencepiece
+    PATHS "${PROJECT_SOURCE_DIR}/third_party/local"
     HINTS "${SENTENCEPIECE_ROOT}/lib")
 set(SENTENCEPIECE_INCLUDE_DIRS ${SENTENCEPIECE_ROOT}/include)
 include_directories(${SENTENCEPIECE_INCLUDE_DIRS})
