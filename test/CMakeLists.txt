@@ -8,12 +8,12 @@ mark_as_advanced(
 
 include_directories(${PROJECT_SOURCE_DIR})
 
-set(SOURCES test_squad_utils.cpp ../src/squad_utils.cpp)
+set(SOURCES test_squad_utils.cpp)
 add_executable(squad_utils-gtest ${SOURCES})
-target_link_libraries(squad_utils-gtest gtest gtest_main nlohmann_json::nlohmann_json)
+target_link_libraries(squad_utils-gtest gtest gtest_main hflt)
 gtest_discover_tests(squad_utils-gtest WORKING_DIRECTORY $<TARGET_FILE_DIR:squad_utils-gtest>)
 
-#add_custom_command(TARGET squad_utils-gtest PRE_BUILD
-#                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-#                   "${CMAKE_CURRENT_SOURCE_DIR}/assets" $<TARGET_FILE_DIR:squad_utils-gtest>/assets)
+add_custom_command(TARGET squad_utils-gtest POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   "${PROJECT_SOURCE_DIR}/data" $<TARGET_FILE_DIR:squad_utils-gtest>/data)
 

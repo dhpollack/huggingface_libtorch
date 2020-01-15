@@ -1,14 +1,4 @@
-#include <sentencepiece_processor.h>
-#include <torch/script.h>
-#include <torch/torch.h>
-
-#include <fstream>
-#include <iostream>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <vector>
-
+#include "run_model.h"
 #include "data_utils.h"
 
 using namespace std;
