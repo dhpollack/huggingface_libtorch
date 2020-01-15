@@ -39,5 +39,5 @@ after_success:
     - python scripts/trace_albert.py
     - cd build
     - head -n 100 ../data/SST-2/dev.tsv > ../data/SST-2/dev-small.tsv
-    - ./hlft ../models/sst2_trained ../data/SST-2/dev-small.tsv 
+    - ./hflt ../models/sst2_trained ../data/SST-2/dev-small.tsv 
     - ctest -VV
