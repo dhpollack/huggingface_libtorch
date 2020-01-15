@@ -28,7 +28,7 @@ script:
 after_success:
     - ./hflt
     - wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O ../models/sst2_trained.tar.gz && rm -rf /tmp/cookies.txt
-    - curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+    - curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
     - chmod +x /tmp/miniconda.sh
     - /tmp/miniconda.sh -b -p ~/miniconda3
     - ~/miniconda3/bin/conda install -y python=3.7 numpy
