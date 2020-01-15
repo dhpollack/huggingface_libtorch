@@ -9,7 +9,7 @@ addons:
 
 before_script:
     - mkdir build_gtest && cd build_gtest
-    - cmake -DBUILD_SHARED_LIBS=ON usr/src/gtest && make && sudo make install
+    - cmake -DBUILD_SHARED_LIBS=ON /usr/src/gtest && make && sudo make install
     - cd ..
     - rm -Rf build_gtest
     - mkdir models
