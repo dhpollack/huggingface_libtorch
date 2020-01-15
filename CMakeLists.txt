@@ -30,6 +30,7 @@ set(UTIL_FILES
 # add the executable
 add_library(hflt SHARED ${UTIL_FILES})
 add_executable(hflt-bin ${SOURCE_FILES})
+set_target_properties(hflt-bin PROPERTIES OUTPUT_NAME "hflt")
 
 # add sentencepiece, consider making this a Find*.cmake file
 if (DEFINED ENV{SENTENCEPIECE_ROOT})
