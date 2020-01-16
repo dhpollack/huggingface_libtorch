@@ -1,5 +1,5 @@
-#include "src/squad_utils.h"
 #include "gtest/gtest.h"
+#include "src/squad_utils.h"
 
 using namespace std;
 
@@ -33,7 +33,3 @@ TEST(squadutilsTest, read_squad_json) {
     EXPECT_GT(example.paragraph_text.size(), 0);
 }
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

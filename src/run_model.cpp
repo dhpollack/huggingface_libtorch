@@ -6,8 +6,10 @@ using namespace std;
 int main(int argc, char *argv[]) {
   // get cli args and check if files exist
   if (argc != 3) {
-    cout << "usage:  huggingface-albert [model_path] [data_file_path]" << endl;
-    cout << "   i.e. `./huggingface-albert ../models/sst2_trained "
+    string pn(argv[0]);
+    string pn_nopath = pn.substr(pn.find_last_of("/\\") + 1);
+    cout << "usage:  " << pn_nopath << " [model_path] [data_file_path]" << endl;
+    cout << "   i.e. `" << pn << " ../models/sst2_trained "
             "../data/SST-2/dev.tsv`"
          << endl;
     return -1;
