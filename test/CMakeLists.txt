@@ -10,7 +10,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 set(SOURCES hflt_tests.cpp)
 add_executable(hflt-gtest ${SOURCES})
-target_link_libraries(hflt-gtest hflt gtest_main)
+target_link_libraries(hflt-gtest hflt gtest_main gtest)
 gtest_discover_tests(hflt-gtest WORKING_DIRECTORY $<TARGET_FILE_DIR:hflt-gtest>)
 
 add_custom_command(TARGET hflt-gtest POST_BUILD

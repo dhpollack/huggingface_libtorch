@@ -6,7 +6,7 @@ mkdir -p third_party && cd third_party
 
 THIRDPARTYLOCAL="local"
 SENTENCEPIECEURI="https://github.com/google/sentencepiece.git"
-LIBTORCHURI="https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.3.1%2Bcpu.zip"
+LIBTORCHURI="https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip"
 BOOSTURI="https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz"
 NLOHMANNURI="https://github.com/nlohmann/json.git"
 
