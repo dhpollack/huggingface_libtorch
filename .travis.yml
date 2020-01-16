@@ -26,18 +26,22 @@ script:
     - make
 
 after_success:
-    - ./hflt
+    - src/hflt
     - wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O ../models/sst2_trained.tar.gz && rm -rf /tmp/cookies.txt
     - curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
     - chmod +x /tmp/miniconda.sh
     - /tmp/miniconda.sh -b -p ~/miniconda3
-    - ~/miniconda3/bin/conda install -y python=3.7 numpy
-    - ~/miniconda3/bin/conda install -y -c pytorch pytorch
-    - export PATH $(realpath ~/miniconda3/conda/bin):$PATH
+    - source "$HOME/miniconda3/etc/profile.d/conda.sh"
+    - hash -r
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda create -q -n test-environment python=3.7
+    - conda activate test-environment
+    - conda install -c pytorch pytorch cpuonly
     - pip install transformers
     - cd ../models && tar xzvf sst2_trained.tar.gz && cd ..
     - python scripts/trace_albert.py
     - cd build
     - head -n 100 ../data/SST-2/dev.tsv > ../data/SST-2/dev-small.tsv
-    - ./hflt ../models/sst2_trained ../data/SST-2/dev-small.tsv 
+    - src/hflt ../models/sst2_trained ../data/SST-2/dev-small.tsv 
     - ctest -VV
