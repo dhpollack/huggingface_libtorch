@@ -27,7 +27,7 @@ include_directories(${SENTENCEPIECE_INCLUDE_DIRS})
 #pkg_check_modules(SENTENCEPIECE REQUIRED sentencepiece)
 #target_link_libraries(hflt "${SENTENCEPIECE_LINK_LIBRARIES})
 
-# add boost tokenizer, which is header only so no components needed to be specified 
+# add boost config_utils. which is header only so no components needed to be specified 
 # https://stackoverflow.com/questions/6646405/how-do-you-add-boost-libraries-in-cmakelists-txt
 find_package(Boost 1.45.0)
 include_directories(${Boost_INCLUDE_DIRS})

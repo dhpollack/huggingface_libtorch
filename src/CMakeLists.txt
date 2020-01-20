@@ -15,6 +15,8 @@ set(SOURCE_FILES
 set(UTIL_FILES
     squad_utils.cpp
     data_utils.cpp
+    tokenizer_base.cpp
+    config_utils.cpp
    )
 
 # add the shared library and executable
