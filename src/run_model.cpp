@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
          << endl;
     return -1;
   }
+  string pretrained_dir(argv[1]);
   string sentencepiece_model_path(argv[1]);
   sentencepiece_model_path.append("/spiece.model");
   string traced_model_path(argv[1]);
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
   }
 
   // create dataset and dataloader
-  auto ds = SST2(fp, sentencepiece_model_path, MAXIMUM_SEQUENCE_LENGTH)
+  auto ds = SST2(fp, pretrained_dir, MAXIMUM_SEQUENCE_LENGTH)
                 .map(torch::data::transforms::Stack<>());
   ;
   auto dl =

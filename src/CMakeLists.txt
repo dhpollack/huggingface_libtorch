@@ -16,6 +16,7 @@ set(UTIL_FILES
     squad_utils.cpp
     data_utils.cpp
     tokenizer_base.cpp
+    tokenizer_albert.cpp
     config_utils.cpp
    )
 

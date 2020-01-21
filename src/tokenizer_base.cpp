@@ -12,15 +12,18 @@ TokenizerBase::TokenizerBase(string bos_token, string eos_token,
       additional_special_tokens(additional_special_tokens),
       _pad_token_type_id(_pad_token_type_id) {}
 
-TokenizerBase::TokenizerBase(const char *pretrained_dir) 
+TokenizerBase::TokenizerBase(const char *pretrained_dir)
     : TokenizerBase(read_transformers_pretrained(pretrained_dir)) {}
 
-TokenizerBase::TokenizerBase(TransformersTokenizerConfigs configs) 
-    : TokenizerBase(configs.special_tokens_map.bos_token, configs.special_tokens_map.eos_token, 
-	            configs.special_tokens_map.unk_token, configs.special_tokens_map.sep_token, 
-		    configs.special_tokens_map.pad_token, configs.special_tokens_map.cls_token, 
-		    configs.special_tokens_map.mask_token, configs.added_tokens.added_tokens, 0) {}
-
+TokenizerBase::TokenizerBase(TransformersTokenizerConfigs configs)
+    : TokenizerBase(configs.special_tokens_map.bos_token,
+		    configs.special_tokens_map.eos_token,
+		    configs.special_tokens_map.unk_token,
+		    configs.special_tokens_map.sep_token,
+		    configs.special_tokens_map.pad_token,
+		    configs.special_tokens_map.cls_token,
+		    configs.special_tokens_map.mask_token,
+		    configs.added_tokens.added_tokens, 0) {}
 
 vector<string> TokenizerBase::tokenize(string &text) {
     vector<string> tokens;

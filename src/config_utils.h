@@ -21,8 +21,8 @@ struct TransformersSpecialTokensMap {
   string pad_token;
   string sep_token;
   string unk_token;
-  string bos_token;  // in sentencepiece models
-  string eos_token;  // in sentencepiece models
+  string bos_token; // in sentencepiece models
+  string eos_token; // in sentencepiece models
 };
 
 struct TransformersAddedTokens {
