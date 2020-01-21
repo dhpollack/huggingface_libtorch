@@ -1,0 +1,28 @@
+@PACKAGE_INIT@
+
+include( "${CMAKE_CURRENT_LIST_DIR}/hfltTargets.cmake" )
+
+# add sentencepiece, consider making this a Find*.cmake file
+if (DEFINED ENV{SENTENCEPIECE_ROOT})
+    set(SENTENCEPIECE_ROOT $ENV{SENTENCEPIECE_ROOT})
+else()
+    set(SENTENCEPIECE_ROOT ${PROJECT_SOURCE_DIR}/third_party/local)
+endif()
+find_library(SENTENCEPIECE_LIBRARIES
+    NAMES sentencepiece libsentencepiece
+    PATHS "${PROJECT_SOURCE_DIR}/third_party/local"
+    HINTS "${SENTENCEPIECE_ROOT}/lib")
+set(SENTENCEPIECE_INCLUDE_DIRS ${SENTENCEPIECE_ROOT}/include)
+include_directories(${SENTENCEPIECE_INCLUDE_DIRS})
+
+# add boost tokenizer, which is header only so no components needed to be specified 
+# https://stackoverflow.com/questions/6646405/how-do-you-add-boost-libraries-in-cmakelists-txt
+find_package(Boost 1.45.0)
+include_directories(${Boost_INCLUDE_DIRS})
+
+# add torch
+find_package(Torch REQUIRED)
+
+# add nlohmann json
+find_package(nlohmann_json PATHS "${PROJECT_SOURCE_DIR}/third_party/local"  REQUIRED)
+

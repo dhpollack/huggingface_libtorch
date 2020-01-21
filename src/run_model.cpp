@@ -1,14 +1,4 @@
-#include <sentencepiece_processor.h>
-#include <torch/script.h>
-#include <torch/torch.h>
-
-#include <fstream>
-#include <iostream>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <vector>
-
+#include "run_model.h"
 #include "data_utils.h"
 
 using namespace std;
@@ -16,12 +6,15 @@ using namespace std;
 int main(int argc, char *argv[]) {
   // get cli args and check if files exist
   if (argc != 3) {
-    cout << "usage:  huggingface-albert [model_path] [data_file_path]" << endl;
-    cout << "   i.e. `./huggingface-albert ../models/sst2_trained "
+    string pn(argv[0]);
+    string pn_nopath = pn.substr(pn.find_last_of("/\\") + 1);
+    cout << "usage:  " << pn_nopath << " [model_path] [data_file_path]" << endl;
+    cout << "   i.e. `" << pn << " ../models/sst2_trained "
             "../data/SST-2/dev.tsv`"
          << endl;
     return -1;
   }
+  string pretrained_dir(argv[1]);
   string sentencepiece_model_path(argv[1]);
   sentencepiece_model_path.append("/spiece.model");
   string traced_model_path(argv[1]);
@@ -42,8 +35,13 @@ int main(int argc, char *argv[]) {
   // read examples
   string fp(argv[2]);
   auto examples = readCsvFile(fp);
+  if (examples.size() == 1) {
+    std::cerr << "found 0 examples in the file: " << argv[2] << endl;
+    return -1;
+  }
+
   // create dataset and dataloader
-  auto ds = SST2(fp, sentencepiece_model_path, MAXIMUM_SEQUENCE_LENGTH)
+  auto ds = SST2(fp, pretrained_dir, MAXIMUM_SEQUENCE_LENGTH)
                 .map(torch::data::transforms::Stack<>());
   ;
   auto dl =
@@ -66,8 +64,7 @@ int main(int argc, char *argv[]) {
   vector<torch::Tensor> preds_vec;
   vector<torch::Tensor> labels_vec;
   for (auto &mb : *dl) {
-    cout << "Batch Size: " << mb.data.size(0) << ", " << mb.data.size(1)
-         << endl;
+    cout << "Batch Size: " << mb.data.sizes() << endl;
     labels_vec.push_back(mb.target);
     auto token_ids = torch::select(mb.data, 1, 0);
     auto attention_masks = torch::select(mb.data, 1, 1);
@@ -87,5 +84,5 @@ int main(int argc, char *argv[]) {
   float correct = preds.eq(labels).sum().item<float>();
   float total = preds.size(0);
   cout << "Acc: " << correct / total << endl;
-  return (1);
+  return 1;
 }
