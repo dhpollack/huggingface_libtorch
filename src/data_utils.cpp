@@ -18,25 +18,26 @@
 
 using namespace std;
 
-vector<pair<string, int64_t>>
+vector<InputExample>
 readCsvFile(const string &filepath) {
   // This function assumes the csv file is in the format `<sentence>\t<label>`
-  vector<string> sentences;
-  vector<int64_t> labels;
-  vector<pair<string, int64_t>> examples;
+  //vector<string> sentences;
+  //vector<int64_t> labels;
+  vector<InputExample> examples;
   string line;
-  pair<string, int64_t> p;
+  //pair<string, int64_t> p;
   ifstream ifs(filepath);
   if (!ifs.is_open()) {
     return examples;
   }
   typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
   boost::char_separator<char> sep("\t");
+  size_t i = 0;
   while (getline(ifs, line)) {
     tokenizer tokens(line, sep);
     tokenizer::iterator tok_iter = tokens.begin();
     string sentence = *tok_iter;
-    p.first = sentence;
+    //p.first = sentence;
     ++tok_iter;
     int64_t label = 0;
     istringstream i_str(*tok_iter);
@@ -45,22 +46,17 @@ readCsvFile(const string &filepath) {
       //cout << "found invalid example: " << line << endl;
       continue;
     }
-    p.second = label;
-    examples.push_back(p);
-    sentences.push_back(p.first);
-    labels.push_back(p.second);
+    //p.second = label;
+    InputExample ex = {std::to_string(i), sentence, "", std::to_string(label)};
+    examples.push_back(ex);
+    //sentences.push_back(p.first);
+    //labels.push_back(p.second);
   }
   return examples;
 }
 
 SST2::SST2(const string &fp, const string &pretrained_dir, const int msl)
     : examples_(readCsvFile(fp)), msl_(msl), tokenizer_(pretrained_dir.c_str()) {
-  /*
-  shared_ptr<sentencepiece::SentencePieceProcessor> tok_model(
-      new sentencepiece::SentencePieceProcessor());
-  tok_model->LoadOrDie(sp);
-  processor_ = move(tok_model);
-  */
 }
 
 // dataset get
@@ -68,10 +64,9 @@ torch::data::Example<> SST2::get(size_t index) {
   // torch::data::Example<>() is {self.data, self.target}
   auto opts_data = torch::TensorOptions().dtype(torch::kLong);
   auto opts_tgt = torch::TensorOptions().dtype(torch::kInt32);
-  auto p = examples_[index];
-  // tensorize data
-  string text_b("");
-  auto tokens_tuple = tokenizer_.encode(p.first, text_b, true, msl_, 0, "", true);
+  auto ex = examples_[index];
+  // tokenize text
+  auto tokens_tuple = tokenizer_.encode(ex.text_a, ex.text_b, true, msl_, 0, "", true);
   // tensorize data
   torch::Tensor token_ids =
       torch::from_blob(std::get<0>(tokens_tuple).data(), {msl_}, opts_data);
@@ -86,7 +81,7 @@ torch::data::Example<> SST2::get(size_t index) {
   torch::Tensor ret_data = torch::stack(
       {token_ids, attention_mask, token_type_ids, position_ids}, 0);
   // tensorize label
-  vector<long> label_raw{p.second};
+  vector<long> label_raw{stol(ex.label)};
   int64_t label_size = label_raw.size();
   torch::Tensor label =
       torch::from_blob(label_raw.data(), {label_size}, opts_tgt).to(torch::kLong);

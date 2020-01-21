@@ -41,10 +41,10 @@ tpenc TokenizerAlbert::encode(string &text_a, string &text_b,
   processor_->Encode(text_a, &token_ids_int_a);
   processor_->Encode(text_b, &token_ids_int_b);
   // TODO the sp model does not encode the CLS and SEP tokens
-  token_ids_int_a.insert(token_ids_int_a.begin(), 2);
-  token_ids_int_a.push_back(3);
+  token_ids_int_a.insert(token_ids_int_a.begin(), processor_->PieceToId(cls_token));
+  token_ids_int_a.push_back(processor_->PieceToId(sep_token));
   if (token_ids_int_b.size() > 0)
-    token_ids_int_b.push_back(3);
+    token_ids_int_b.push_back(processor_->PieceToId(sep_token));
   vector<long> token_ids;
   //token_ids.reserve(token_ids_int_a.size() + token_ids_int_b.size());
   token_ids.insert(token_ids.end(), token_ids_int_a.begin(),

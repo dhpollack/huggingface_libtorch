@@ -40,10 +40,8 @@ TransformersTokenizerConfigs read_transformers_pretrained(const char *dirpath) {
 }
 
 TransformersTokenizerConfig read_transformers_tokenizer_config(ifstream &fd) {
-  // do something
   json config;
   fd >> config;
-  cout << config.dump(2) << endl;
   TransformersTokenizerConfig tc = {
       _contains_or_empty<bool>(config, "do_lower_case"),
       _contains_or_empty<vector<string>>(config, "init_inputs"),
@@ -55,7 +53,6 @@ TransformersSpecialTokensMap
 read_transformers_special_tokens_map(ifstream &fd) {
   json special_tokens;
   fd >> special_tokens;
-  cout << special_tokens.dump(2) << endl;
   TransformersSpecialTokensMap stm = {
       _contains_or_empty<string>(special_tokens, "cls_token"),
       _contains_or_empty<string>(special_tokens, "mask_token"),
@@ -70,8 +67,6 @@ read_transformers_special_tokens_map(ifstream &fd) {
 TransformersAddedTokens read_transformers_added_tokens(ifstream &fd) {
   json added_tokens;
   fd >> added_tokens;
-  cout << added_tokens.dump(2) << endl;
-
   TransformersAddedTokens at = {added_tokens.size() == 0
                                     ? vector<string>()
                                     : added_tokens.get<vector<string>>()};

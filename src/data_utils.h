@@ -10,7 +10,7 @@
 
 using namespace std;
 
-vector<pair<string, int64_t>>
+vector<InputExample>
 readCsvFile(const string &filepath);
 
 class SST2 : public torch::data::datasets::Dataset<SST2> {
@@ -38,13 +38,13 @@ public:
   virtual void t2id(string &s);
 
   // Returns all examples as a vector.
-  const vector<pair<string, int64_t>> &examples() const;
+  const vector<InputExample> &examples() const;
 
   // Returns all targets stacked into a single tensor.
   // const torch::Tensor& targets() const;
 
 private:
-  vector<pair<string, int64_t>> examples_;
+  vector<InputExample> examples_;
   TokenizerAlbert tokenizer_;
   int msl_; // maximum sequence length
 };
