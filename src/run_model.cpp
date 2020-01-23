@@ -1,5 +1,6 @@
 #include "run_model.h"
 #include "data_utils.h"
+#include "transformer_stack.h"
 
 using namespace std;
 
@@ -9,7 +10,8 @@ int main(int argc, char *argv[]) {
     string pn(argv[0]);
     string pn_nopath = pn.substr(pn.find_last_of("/\\") + 1);
     cout << "usage:  " << pn_nopath << " [model_path] [data_file_path]" << endl;
-    cout << "   i.e. `" << pn << " ../models/sst2_trained "
+    cout << "   i.e. `" << pn
+         << " ../models/sst2_trained "
             "../data/SST-2/dev.tsv`"
          << endl;
     return -1;
@@ -41,12 +43,11 @@ int main(int argc, char *argv[]) {
   }
 
   // create dataset and dataloader
-  auto ds = SST2(fp, pretrained_dir, MAXIMUM_SEQUENCE_LENGTH)
-                .map(torch::data::transforms::Stack<>());
-  ;
+  SST2<TokenizerAlbert> ds(fp, pretrained_dir, MAXIMUM_SEQUENCE_LENGTH);
+  auto ds_map = ds.map(torch::data::transforms::Stack<TransformerFeatures<>>());
   auto dl =
       torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
-          move(ds), BATCH_SIZE);
+          move(ds_map), BATCH_SIZE);
 
   // load albert model and put into eval mode
   torch::jit::script::Module model;
@@ -64,12 +65,12 @@ int main(int argc, char *argv[]) {
   vector<torch::Tensor> preds_vec;
   vector<torch::Tensor> labels_vec;
   for (auto &mb : *dl) {
-    cout << "Batch Size: " << mb.data.sizes() << endl;
-    labels_vec.push_back(mb.target);
-    auto token_ids = torch::select(mb.data, 1, 0);
-    auto attention_masks = torch::select(mb.data, 1, 1);
-    auto token_type_ids = torch::select(mb.data, 1, 2);
-    auto position_ids = torch::select(mb.data, 1, 3);
+    cout << "Batch Size: " << mb.input_ids.sizes() << endl;
+    labels_vec.push_back(mb.label);
+    auto token_ids = mb.input_ids;
+    auto attention_masks = mb.attention_mask;
+    auto token_type_ids = mb.token_type_ids;
+    auto position_ids = mb.position_ids;
     vector<torch::jit::IValue> inputs;
     inputs.push_back(token_ids.to(device));
     inputs.push_back(attention_masks.to(device));

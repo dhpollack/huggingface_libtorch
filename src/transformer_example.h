@@ -1,20 +1,41 @@
 #pragma once
 
-#include <torch/types.h>
 #include <string>
+#include <torch/types.h>
 
-using namespace std;
-
-struct InputExample {
-  string guid;
-  string text_a;
-  string text_b;
-  string label;
+struct TransformerExample {
+  std::string guid;
+  std::string text_a;
+  std::string text_b;
+  std::string label;
 };
 
-struct TransformersExample {
-  torch::Tensor token_ids;
-  torch::Tensor attention_mask;
-  torch::Tensor token_type_ids;
-  torch::Tensor position_ids;
+/// A `TransformerFeatures` from a dataset.
+///
+/// A dataset consists of data and an associated target (label).
+template <typename InputID = torch::Tensor,
+          typename AttentionMask = torch::Tensor,
+          typename TokenTypeID = torch::Tensor,
+          typename PositionID = torch::Tensor, typename Label = torch::Tensor>
+struct TransformerFeatures {
+  using InputIDType = InputID;
+  using AttentionMaskType = AttentionMask;
+  using TokenTypeIDType = TokenTypeID;
+  using PositionIDType = PositionID;
+  using LabelType = Label;
+
+  TransformerFeatures() = default;
+  TransformerFeatures(InputID input_ids, AttentionMask attention_mask,
+                      TokenTypeID token_type_ids, PositionID position_ids,
+                      Label label)
+      : input_ids(std::move(input_ids)),
+        attention_mask(std::move(attention_mask)),
+        token_type_ids(std::move(token_type_ids)),
+        position_ids(std::move(position_ids)), label(std::move(label)) {}
+
+  InputIDType input_ids;
+  AttentionMaskType attention_mask;
+  TokenTypeIDType token_type_ids;
+  PositionIDType position_ids;
+  LabelType label;
 };

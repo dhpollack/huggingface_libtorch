@@ -18,14 +18,20 @@
 
 using namespace std;
 
-vector<InputExample>
-readCsvFile(const string &filepath) {
+torch::Tensor _label_to_tensor(const string &label,
+                               torch::TensorOptions topts) {
+  vector<long> lv;
+  stringstream ss(label);
+  std::transform(istream_iterator<long>(ss), istream_iterator<long>(),
+                 std::back_inserter(lv), [](long x) { return x; });
+  return torch::from_blob(lv.data(), {(long)lv.size()}, topts).clone();
+}
+
+template <typename ExampleType>
+vector<ExampleType> readCsvFile(const string &filepath) {
   // This function assumes the csv file is in the format `<sentence>\t<label>`
-  //vector<string> sentences;
-  //vector<int64_t> labels;
-  vector<InputExample> examples;
+  vector<ExampleType> examples;
   string line;
-  //pair<string, int64_t> p;
   ifstream ifs(filepath);
   if (!ifs.is_open()) {
     return examples;
@@ -37,63 +43,48 @@ readCsvFile(const string &filepath) {
     tokenizer tokens(line, sep);
     tokenizer::iterator tok_iter = tokens.begin();
     string sentence = *tok_iter;
-    //p.first = sentence;
     ++tok_iter;
     int64_t label = 0;
     istringstream i_str(*tok_iter);
     if (!(i_str >> label)) {
       // this should exclude the header of the csv
-      //cout << "found invalid example: " << line << endl;
+      // cout << "found invalid example: " << line << endl;
       continue;
     }
-    //p.second = label;
-    InputExample ex = {std::to_string(i), sentence, "", std::to_string(label)};
+    ExampleType ex = {std::to_string(i), sentence, "", std::to_string(label)};
     examples.push_back(ex);
-    //sentences.push_back(p.first);
-    //labels.push_back(p.second);
+    ++i;
   }
   return examples;
 }
 
-SST2::SST2(const string &fp, const string &pretrained_dir, const int msl)
-    : examples_(readCsvFile(fp)), msl_(msl), tokenizer_(pretrained_dir.c_str()) {
-}
+template <typename TokenizerType, typename ExampleType, typename FeaturesType>
+SST2<TokenizerType, ExampleType, FeaturesType>::SST2(
+    const string &fp, const string &pretrained_dir, const int msl)
+    : examples_(readCsvFile<ExampleType>(fp)), msl_(msl),
+      tokenizer_(pretrained_dir.c_str()) {}
 
-// dataset get
-torch::data::Example<> SST2::get(size_t index) {
+template <typename TokenizerType, typename ExampleType, typename FeaturesType>
+FeaturesType SST2<TokenizerType, ExampleType, FeaturesType>::get(size_t index) {
   // torch::data::Example<>() is {self.data, self.target}
   auto opts_data = torch::TensorOptions().dtype(torch::kLong);
-  auto opts_tgt = torch::TensorOptions().dtype(torch::kInt32);
-  auto ex = examples_[index];
-  // tokenize text
-  auto tokens_tuple = tokenizer_.encode(ex.text_a, ex.text_b, true, msl_, 0, "", true);
-  // tensorize data
-  torch::Tensor token_ids =
-      torch::from_blob(std::get<0>(tokens_tuple).data(), {msl_}, opts_data);
-  torch::Tensor attention_mask =
-      torch::from_blob(std::get<1>(tokens_tuple).data(), {msl_}, opts_data);
-  torch::Tensor token_type_ids =
-      torch::from_blob(std::get<2>(tokens_tuple).data(), {msl_}, opts_data);
-  torch::Tensor position_ids =
-      torch::arange(0, msl_, opts_data);
-  // stack data tensors
-  // TODO: figure out how to use a custom type instead of torch::data::Example
-  torch::Tensor ret_data = torch::stack(
-      {token_ids, attention_mask, token_type_ids, position_ids}, 0);
-  // tensorize label
-  vector<long> label_raw{stol(ex.label)};
-  int64_t label_size = label_raw.size();
-  torch::Tensor label =
-      torch::from_blob(label_raw.data(), {label_size}, opts_tgt).to(torch::kLong);
-  return {ret_data, label};
+  ExampleType ex = examples_[index];
+  // tokenize and tensorize
+  FeaturesType features =
+      tokenizer_.encode(ex.text_a, ex.text_b, true, msl_, 0, "", true);
+  features.label = _label_to_tensor(ex.label, opts_data);
+  return features;
 }
 // dataset size()
-torch::optional<size_t> SST2::size() const {
+template <typename TokenizerType, typename ExampleType, typename FeaturesType>
+torch::optional<size_t>
+SST2<TokenizerType, ExampleType, FeaturesType>::size() const {
   torch::optional<size_t> sz(examples_.size());
   return sz;
 }
 // dataset text to token_ids, currently not used.
-void SST2::t2id(string &s) {
+template <typename TokenizerType, typename ExampleType, typename FeaturesType>
+void SST2<TokenizerType, ExampleType, FeaturesType>::t2id(string &s) {
   /*
   vector<int> tokens;
   tokenizer_.processor_->Encode(s, &tokens);
@@ -102,4 +93,3 @@ void SST2::t2id(string &s) {
   }
   */
 }
-

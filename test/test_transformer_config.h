@@ -5,7 +5,7 @@ TEST(transformerconfigTest, read_pretrained) {
       "../../models/sst2_trained";
   auto configs = read_transformers_pretrained(pretrained_dir);
   EXPECT_EQ(configs.tokenizer_config.do_lower_case, false);
-  EXPECT_EQ(configs.tokenizer_config.init_inputs, vector<string>({}));
+  EXPECT_EQ(configs.tokenizer_config.init_inputs, std::vector<std::string>({}));
   EXPECT_EQ(configs.tokenizer_config.max_len, 512);
   EXPECT_EQ(configs.special_tokens_map.cls_token, "[CLS]");
   EXPECT_EQ(configs.special_tokens_map.mask_token, "[MASK]");

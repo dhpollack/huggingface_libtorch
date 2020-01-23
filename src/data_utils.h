@@ -5,27 +5,31 @@
 #include <torch/data/example.h>
 #include <torch/types.h>
 
-#include "transformer_example.h"
 #include "tokenizer_albert.h"
+#include "transformer_example.h"
 
-using namespace std;
+template <typename ExampleType = TransformerExample>
+std::vector<ExampleType> readCsvFile(const std::string &filepath);
 
-vector<InputExample>
-readCsvFile(const string &filepath);
+torch::Tensor _label_to_tensor(const std::string &label, torch::TensorOptions topts);
 
-class SST2 : public torch::data::datasets::Dataset<SST2> {
+template <typename TokenizerType = TokenizerBase,
+          typename TransformerSingleExample = TransformerExample,
+          typename TransformerSingleFeatures = TransformerFeatures<>>
+class SST2 : public torch::data::datasets::Dataset<
+                 SST2<TokenizerType, TransformerSingleExample,
+                      TransformerSingleFeatures>,
+                 TransformerSingleFeatures> {
 public:
-  // The mode in which the dataset is loaded
-  // enum Mode { kTrain, kTest };
-
   // Loads the SST dataset from the `filepath` path.
   //
   // The supplied `filepath` path should be a tsv file with the sentence
   // followed by the label.
-  explicit SST2(const string &fp, const string &pretrained_dir, const int msl);
+  explicit SST2(const std::string &fp, const std::string &pretrained_dir,
+                const int msl);
 
-  // Returns the `Example` at the given `index`.
-  torch::data::Example<> get(size_t index) override;
+  // Returns the `TransformerSingleExample` at the given `index`.
+  TransformerSingleFeatures get(size_t index) override;
 
   // Returns the `torch::Tensor`s for the data and targets of a batch
   // (at::ArrayRef) pair<torch::Tensor, torch::Tensor>
@@ -35,16 +39,19 @@ public:
   torch::optional<size_t> size() const override;
 
   // text to token_ids
-  virtual void t2id(string &s);
+  virtual void t2id(std::string &s);
 
   // Returns all examples as a vector.
-  const vector<InputExample> &examples() const;
+  const std::vector<TransformerSingleExample> &examples() const;
 
   // Returns all targets stacked into a single tensor.
   // const torch::Tensor& targets() const;
 
 private:
-  vector<InputExample> examples_;
-  TokenizerAlbert tokenizer_;
+  std::vector<TransformerSingleExample> examples_;
+  TokenizerType tokenizer_;
   int msl_; // maximum sequence length
 };
+
+template class SST2<TokenizerAlbert>;
+template class SST2<>;
