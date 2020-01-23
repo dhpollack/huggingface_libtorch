@@ -11,7 +11,8 @@
 template <typename ExampleType = TransformerExample>
 std::vector<ExampleType> readCsvFile(const std::string &filepath);
 
-torch::Tensor _label_to_tensor(const std::string &label, torch::TensorOptions topts);
+torch::Tensor _label_to_tensor(const std::string &label,
+                               torch::TensorOptions topts);
 
 template <typename TokenizerType = TokenizerBase,
           typename TransformerSingleExample = TransformerExample,
