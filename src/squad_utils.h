@@ -47,4 +47,3 @@ struct InputFeatures {
 
 vector<SquadExample> read_squad_examples(ifstream &input_file,
                                          bool is_training);
-
