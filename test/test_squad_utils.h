@@ -1,10 +1,8 @@
 #include "gtest/gtest.h"
 #include "src/squad_utils.h"
 
-using namespace std;
-
 bool file_exists(const char *fp) {
-  ifstream fd(fp);
+  std::ifstream fd(fp);
   return fd.good();
 }
 
@@ -27,8 +25,8 @@ const char *squad_path = "data/SQuAD/dev-v2.0.json";
 
 TEST(squadutilsTest, read_squad_json) {
   file_test(squad_path);
-  ifstream squad_file(squad_path);
-  vector<SquadExample> examples = read_squad_examples(squad_file, true);
+  std::ifstream squad_file(squad_path);
+  std::vector<SquadExample> examples = read_squad_examples(squad_file, true);
   for (auto &example : examples)
     EXPECT_GT(example.paragraph_text.size(), 0);
 }

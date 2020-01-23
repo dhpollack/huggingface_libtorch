@@ -63,11 +63,11 @@ TokenizerBase::encode(string &text_a, string &text_b,
   vector<long> am(ttis.size(), 1);
   // TODO pad here
   torch::Tensor token_ids =
-      torch::from_blob(ids_a.data(), {max_length}, opts_data);
+      torch::from_blob(ids_a.data(), {(long)max_length}, opts_data);
   torch::Tensor attention_mask =
-      torch::from_blob(am.data(), {max_length}, opts_data);
+      torch::from_blob(am.data(), {(long)max_length}, opts_data);
   torch::Tensor token_type_ids =
-      torch::from_blob(ttis.data(), {max_length}, opts_data);
+      torch::from_blob(ttis.data(), {(long)max_length}, opts_data);
   torch::Tensor position_ids = torch::arange(0, (long)max_length, opts_data);
   torch::Tensor dummy_label = torch::zeros(1, opts_data);
   TransformerFeatures<> features = {token_ids, attention_mask, token_type_ids,

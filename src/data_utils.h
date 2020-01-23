@@ -9,9 +9,9 @@
 #include "transformer_example.h"
 
 template <typename ExampleType = TransformerExample>
-vector<ExampleType> readCsvFile(const string &filepath);
+std::vector<ExampleType> readCsvFile(const std::string &filepath);
 
-torch::Tensor _label_to_tensor(const string &label, torch::TensorOptions topts);
+torch::Tensor _label_to_tensor(const std::string &label, torch::TensorOptions topts);
 
 template <typename TokenizerType = TokenizerBase,
           typename TransformerSingleExample = TransformerExample,
@@ -42,13 +42,13 @@ public:
   virtual void t2id(std::string &s);
 
   // Returns all examples as a vector.
-  const vector<TransformerSingleExample> &examples() const;
+  const std::vector<TransformerSingleExample> &examples() const;
 
   // Returns all targets stacked into a single tensor.
   // const torch::Tensor& targets() const;
 
 private:
-  vector<TransformerSingleExample> examples_;
+  std::vector<TransformerSingleExample> examples_;
   TokenizerType tokenizer_;
   int msl_; // maximum sequence length
 };

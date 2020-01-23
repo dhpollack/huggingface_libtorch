@@ -1,5 +1,7 @@
 #include "squad_utils.h"
 
+using namespace std;
+
 vector<SquadExample> read_squad_examples(ifstream &input_file,
                                          bool is_training) {
   json j;

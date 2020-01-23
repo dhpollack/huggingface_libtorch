@@ -21,7 +21,7 @@ public:
   TokenizerBase(const char *pretrained_dir);
   TokenizerBase(TransformersTokenizerConfigs configs);
   ~TokenizerBase(){};
-  virtual std::vector<string> tokenize(std::string &text);
+  virtual std::vector<std::string> tokenize(std::string &text);
   virtual std::vector<long>
   convert_tokens_to_ids(std::vector<std::string> &tokens);
   virtual TransformerFeatures<> encode(std::string &text_a, std::string &text_b,
