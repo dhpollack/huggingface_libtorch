@@ -1,14 +1,3 @@
-#include <boost/tokenizer.hpp>
-#include <fstream>
-#include <iostream>
-#include <ostream>
-#include <sentencepiece_processor.h>
-#include <sstream>
-#include <torch/torch.h>
-
-#include <string>
-#include <vector>
-
 #include "data_utils.h"
 #include "transformer_example.h"
 
@@ -19,7 +8,7 @@
 using namespace std;
 
 torch::Tensor _label_to_tensor(const string &label,
-                               torch::TensorOptions topts) {
+                               torch::TensorOptions &topts) {
   vector<long> lv;
   stringstream ss(label);
   std::transform(istream_iterator<long>(ss), istream_iterator<long>(),
@@ -27,10 +16,9 @@ torch::Tensor _label_to_tensor(const string &label,
   return torch::from_blob(lv.data(), {(long)lv.size()}, topts).clone();
 }
 
-template <typename ExampleType>
-vector<ExampleType> readCsvFile(const string &filepath) {
+vector<TransformerExample> readCsvFile(const string &filepath) {
   // This function assumes the csv file is in the format `<sentence>\t<label>`
-  vector<ExampleType> examples;
+  vector<TransformerExample> examples;
   string line;
   ifstream ifs(filepath);
   if (!ifs.is_open()) {
@@ -51,7 +39,7 @@ vector<ExampleType> readCsvFile(const string &filepath) {
       // cout << "found invalid example: " << line << endl;
       continue;
     }
-    ExampleType ex = {std::to_string(i), sentence, "", std::to_string(label)};
+    TransformerExample ex = {std::to_string(i), sentence, "", std::to_string(label)};
     examples.push_back(ex);
     ++i;
   }
@@ -61,7 +49,7 @@ vector<ExampleType> readCsvFile(const string &filepath) {
 template <typename TokenizerType, typename ExampleType, typename FeaturesType>
 SST2<TokenizerType, ExampleType, FeaturesType>::SST2(
     const string &fp, const string &pretrained_dir, const int msl)
-    : examples_(readCsvFile<ExampleType>(fp)), msl_(msl),
+    : examples_(readCsvFile(fp)), msl_(msl),
       tokenizer_(pretrained_dir.c_str()) {}
 
 template <typename TokenizerType, typename ExampleType, typename FeaturesType>
@@ -93,3 +81,6 @@ void SST2<TokenizerType, ExampleType, FeaturesType>::t2id(string &s) {
   }
   */
 }
+
+template class SST2<TokenizerAlbert>;
+template class SST2<>;

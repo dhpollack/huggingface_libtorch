@@ -32,7 +32,7 @@ make
 currently, gets 89.2325% accuracy on the dev set vs. 89.2201% last reported by the trained model.
 
 ```
-./huggingface-albert
+hflt [model dir] [dataset file]
 ```
 
 ## too lazy to install...

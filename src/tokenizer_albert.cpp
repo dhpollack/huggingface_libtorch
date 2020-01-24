@@ -30,7 +30,7 @@ TokenizerAlbert::TokenizerAlbert(TransformersTokenizerConfigs configs,
                     configs.special_tokens_map.cls_token,
                     configs.special_tokens_map.mask_token,
                     configs.added_tokens.added_tokens, 0),
-      processor_(move(load_spmodel(spmodel_path))){};
+      processor_(load_spmodel(spmodel_path)){};
 
 TransformerFeatures<> TokenizerAlbert::encode(string &text_a, string &text_b,
                                               bool add_special_tokens,

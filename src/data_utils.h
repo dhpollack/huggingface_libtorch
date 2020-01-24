@@ -2,17 +2,24 @@
 
 #include <sentencepiece_processor.h>
 #include <torch/data/datasets/base.h>
-#include <torch/data/example.h>
 #include <torch/types.h>
+
+#include <boost/tokenizer.hpp>
+#include <fstream>
+#include <iostream>
+#include <ostream>
+#include <sstream>
+
+#include <string>
+#include <vector>
 
 #include "tokenizer_albert.h"
 #include "transformer_example.h"
 
-template <typename ExampleType = TransformerExample>
-std::vector<ExampleType> readCsvFile(const std::string &filepath);
+std::vector<TransformerExample> readCsvFile(const std::string &filepath);
 
 torch::Tensor _label_to_tensor(const std::string &label,
-                               torch::TensorOptions topts);
+                               torch::TensorOptions &topts);
 
 template <typename TokenizerType = TokenizerBase,
           typename TransformerSingleExample = TransformerExample,
@@ -50,9 +57,7 @@ public:
 
 private:
   std::vector<TransformerSingleExample> examples_;
-  TokenizerType tokenizer_;
   int msl_; // maximum sequence length
+  TokenizerType tokenizer_;
 };
 
-template class SST2<TokenizerAlbert>;
-template class SST2<>;

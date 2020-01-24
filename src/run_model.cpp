@@ -34,16 +34,11 @@ int main(int argc, char *argv[]) {
   int MAXIMUM_SEQUENCE_LENGTH = 128;
   int BATCH_SIZE = 64;
   torch::Device device(torch::cuda::is_available() ? "cuda" : "cpu");
-  // read examples
-  string fp(argv[2]);
-  auto examples = readCsvFile(fp);
-  if (examples.size() == 1) {
-    std::cerr << "found 0 examples in the file: " << argv[2] << endl;
-    return -1;
-  }
 
   // create dataset and dataloader
+  string fp(argv[2]);
   SST2<TokenizerAlbert> ds(fp, pretrained_dir, MAXIMUM_SEQUENCE_LENGTH);
+  cout << "Found " << ds.size() << " examples in " << argv[2] << endl;
   auto ds_map = ds.map(torch::data::transforms::Stack<TransformerFeatures<>>());
   auto dl =
       torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
