@@ -3,21 +3,21 @@ cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0074 NEW)
 
 set(HEADER_FILES
-    data_utils.h
     squad_utils.h
     )
 
 set(SOURCE_FILES
-    #data_utils.cpp
     run_model.cpp
     )
 
 set(UTIL_FILES
     squad_utils.cpp
-    data_utils.cpp
     tokenizer_base.cpp
     tokenizer_albert.cpp
     config_utils.cpp
+    processors.cpp
+    dataset_classification.cpp
+    dataset_qa.cpp
    )
 
 # add the shared library and executable

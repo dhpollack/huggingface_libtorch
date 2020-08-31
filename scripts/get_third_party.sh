@@ -6,7 +6,7 @@ mkdir -p third_party && cd third_party
 
 THIRDPARTYLOCAL="local"
 SENTENCEPIECEURI="https://github.com/google/sentencepiece.git"
-LIBTORCHURI="https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.4.0%2Bcpu.zip"
+LIBTORCHURI="https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.5.0%2Bcpu.zip"
 BOOSTURI="https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz"
 NLOHMANNURI="https://github.com/nlohmann/json.git"
 
@@ -30,7 +30,7 @@ unzip -qq libtorch.zip
 rm libtorch.zip
 
 echo "installing nlohmann json..."
-git clone ${NLOHMANNURI}
+git clone --depth 1 ${NLOHMANNURI}
 cd json
 mkdir build && cd build
 cmake -DJSON_BuildTests=OFF -DCMAKE_INSTALL_PREFIX=$(realpath ../../${THIRDPARTYLOCAL}) ..

@@ -1,0 +1,58 @@
+{
+  "data": [
+    {
+      "guid": "0",
+      "text_a": "it 's a charming and often affecting journey . ",
+      "text_b": "",
+      "label": "1"
+    },
+    {
+      "guid": "1",
+      "text_a": "unflinchingly bleak and desperate ",
+      "text_b": "",
+      "label": "0"
+    },
+    {
+      "guid": "2",
+      "text_a": "allows us to hope that nolan is poised to embark a major career as a commercial yet inventive filmmaker . ",
+      "text_b": "",
+      "label": "1"
+    },
+    {
+      "guid": "3",
+      "text_a": "the acting , costumes , music , cinematography and sound are all astounding given the production 's austere locales . ",
+      "text_b": "",
+      "label": "1"
+    },
+    {
+      "guid": "4",
+      "text_a": "it 's slow -- very , very slow . ",
+      "text_b": "",
+      "label": "0"
+    },
+    {
+      "guid": "5",
+      "text_a": "although laced with humor and a few fanciful touches , the film is a refreshingly serious look at young women . ",
+      "text_b": "",
+      "label": "1"
+    },
+    {
+      "guid": "6",
+      "text_a": "a sometimes tedious film . ",
+      "text_b": "",
+      "label": "0"
+    },
+    {
+      "guid": "7",
+      "text_a": "or doing last year 's taxes with your ex-wife . ",
+      "text_b": "",
+      "label": "0"
+    },
+    {
+      "guid": "8",
+      "text_a": "you do n't have to know about music to appreciate the film 's easygoing blend of comedy and romance . ",
+      "text_b": "",
+      "label": "1"
+    }
+  ]
+}

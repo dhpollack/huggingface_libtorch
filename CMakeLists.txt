@@ -5,8 +5,15 @@ cmake_policy(SET CMP0074 NEW)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(DO_CLANG_TIDY "clang tidy output" OFF)
+if (DO_CLANG_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
+endif()
+
 # set the project name: Huggingface Libtorch i.e. HfLt
 project(hflt VERSION 0.0.1 DESCRIPTION "huggingface transformers inference in c++")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # add sentencepiece, consider making this a Find*.cmake file
 if (DEFINED ENV{SENTENCEPIECE_ROOT})

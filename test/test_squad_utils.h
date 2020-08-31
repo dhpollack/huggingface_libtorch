@@ -30,4 +30,3 @@ TEST(squadutilsTest, read_squad_json) {
   for (auto &example : examples)
     EXPECT_GT(example.paragraph_text.size(), 0);
 }
-

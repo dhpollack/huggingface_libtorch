@@ -30,7 +30,8 @@ TransformersTokenizerConfigs read_transformers_pretrained(const char *dirpath) {
   string added_tokens_path = basedir + "/added_tokens.json";
   ifstream fd_added_tokens(added_tokens_path);
   if (!fd_added_tokens.is_open()) {
-    cerr << "something went wrong opening: " << added_tokens_path << endl;
+    // keep for debugging, but the added tokens json file isn't always created
+    // cerr << "something went wrong opening: " << added_tokens_path << endl;
   } else {
     added_tokens = read_transformers_added_tokens(fd_added_tokens);
   }
@@ -67,7 +68,7 @@ read_transformers_special_tokens_map(ifstream &fd) {
 TransformersAddedTokens read_transformers_added_tokens(ifstream &fd) {
   json added_tokens;
   fd >> added_tokens;
-  TransformersAddedTokens at = {added_tokens.size() == 0
+  TransformersAddedTokens at = {added_tokens.empty()
                                     ? vector<string>()
                                     : added_tokens.get<vector<string>>()};
   return at;

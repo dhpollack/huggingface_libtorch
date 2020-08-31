@@ -17,17 +17,7 @@ before_script:
     - alias python='python3'
     - scripts/get_data.sh
     - scripts/get_third_party.sh
-    - source compile.env
-    - mkdir build
-    - cd build
-    - cmake -DBUILD_TEST=ON -DCMAKE_BUILD_TYPE=Debug ..
-
-script: 
-    - make
-
-after_success:
-    - src/hflt
-    - wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O ../models/sst2_trained.tar.gz && rm -rf /tmp/cookies.txt
+    - wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1i0rr-ogZ2MDYPpUMBsg-2PV7zVddivJ0" -O models/sst2_trained.tar.gz && rm -rf /tmp/cookies.txt
     - curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
     - chmod +x /tmp/miniconda.sh
     - /tmp/miniconda.sh -b -p ~/miniconda3
@@ -39,9 +29,18 @@ after_success:
     - conda activate test-environment
     - conda install -c pytorch pytorch cpuonly
     - pip install transformers
-    - cd ../models && tar xzvf sst2_trained.tar.gz && cd ..
+    - cd models && tar xzvf sst2_trained.tar.gz && cd ..
     - python scripts/trace_albert.py
+    - source compile.env
+    - mkdir build
     - cd build
+    - cmake -DBUILD_TEST=ON -DCMAKE_BUILD_TYPE=Debug ..
+
+script: 
+    - make
+
+after_success:
+    - src/hflt
     - head -n 100 ../data/SST-2/dev.tsv > ../data/SST-2/dev-small.tsv
     - src/hflt ../models/sst2_trained ../data/SST-2/dev-small.tsv 
     - ctest -VV

@@ -8,6 +8,11 @@ struct TransformerExample {
   std::string text_a;
   std::string text_b;
   std::string label;
+
+  TransformerExample() = default;
+  TransformerExample(std::string guid, std::string text_a, std::string text_b,
+                     std::string label)
+      : guid(guid), text_a(text_a), text_b(text_b), label(label){};
 };
 
 /// A `TransformerFeatures` from a dataset.

@@ -1,8 +1,10 @@
+#pragma once
+
+#include "gtest/gtest.h"
 #include "src/config_utils.h"
 
 TEST(transformerconfigTest, read_pretrained) {
-  const char *pretrained_dir =
-      "../../models/sst2_trained";
+  const char *pretrained_dir = "models/sst2_trained";
   auto configs = read_transformers_pretrained(pretrained_dir);
   EXPECT_EQ(configs.tokenizer_config.do_lower_case, false);
   EXPECT_EQ(configs.tokenizer_config.init_inputs, std::vector<std::string>({}));

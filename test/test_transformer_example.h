@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gtest/gtest.h"
 #include "src/transformer_example.h"
 
 TEST(transformerexampleTest, create_transformer_example) {
@@ -12,6 +13,3 @@ TEST(transformerexampleTest, create_transformer_example) {
   EXPECT_EQ(ex2.text_b, text_b);
   EXPECT_NE(ex1.guid, ex2.guid);
 }
-
-
-
