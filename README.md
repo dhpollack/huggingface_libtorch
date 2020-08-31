@@ -42,9 +42,9 @@ scripts/get_albert_pretrained.sh
 conda create -n hflt python=3.7
 conda activate hflt
 conda install -c pytorch pytorch cpuonly
-pip install transformers
+pip install transformers typer
 # trace the model that we downloaded above
-python scripts/trace_albert.py
+python scripts/trace_model.py
 ```
 
 ## Build from Source
