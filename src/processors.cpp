@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 vector<TransformerExample> readGenericJsonFile(const string &filepath) {
   // assumes a json in the format {..., "data": [{data_obj},...]}, where
   // data_obj = {"guid": "guid_as_string", "text_a": "some text", "text_b":
@@ -14,10 +16,10 @@ vector<TransformerExample> readGenericJsonFile(const string &filepath) {
     json j;
     ifs >> j;
     for (auto &item : j["data"]) {
-      string guid = item["guid"].get<string>();
-      string text_a = item["text_a"].get<string>();
-      string text_b = item["text_b"].get<string>();
-      string label = item["label"].get<string>();
+      auto guid = item["guid"].get<string>();
+      auto text_a = item["text_a"].get<string>();
+      auto text_b = item["text_b"].get<string>();
+      auto label = item["label"].get<string>();
       examples.emplace_back(guid, text_a, text_b, label);
     }
   }
@@ -48,8 +50,10 @@ vector<TransformerExample> readSST2CsvFile(const string &filepath) {
     }
     TransformerExample ex = {std::to_string(i), sentence, "",
                              std::to_string(label)};
-    examples.push_back(ex);
+    examples.emplace_back(ex);
     ++i;
   }
   return examples;
 }
+
+}; // namespace hflt

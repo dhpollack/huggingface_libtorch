@@ -7,6 +7,8 @@
 #include <tuple>
 #include <vector>
 
+namespace hflt {
+
 class TokenizerBase {
 public:
   TokenizerBase(std::string &bos_token, std::string &eos_token,
@@ -56,3 +58,5 @@ protected:
   const std::vector<std::string> additional_special_tokens;
   const long _pad_token_type_id;
 };
+
+}; // namespace hflt

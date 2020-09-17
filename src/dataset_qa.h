@@ -7,14 +7,16 @@
 #include <iostream>
 #include <sstream>
 
-#include <utility>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "squad_utils.h"
 #include "tokenizer_albert.h"
 #include "tokenizer_base.h"
 #include "transformer_example.h"
+
+namespace hflt {
 
 template <typename TokenizerType = TokenizerBase,
           typename TransformerSingleExample = SquadExample,
@@ -51,7 +53,8 @@ public:
   const std::vector<TransformerSingleExample> &examples() const;
 
   TransformerSingleFeatures
-  example_to_features(TransformerSingleExample &example, std::pair<size_t, size_t> &p_span);
+  example_to_features(TransformerSingleExample &example,
+                      std::pair<size_t, size_t> &p_span);
 
 private:
   torch::Tensor _label_to_tensor(const std::string &label,
@@ -61,3 +64,5 @@ private:
   std::vector<std::pair<size_t, size_t>> items_;
   long msl_; // maximum sequence length
 };
+
+}; // namespace hflt

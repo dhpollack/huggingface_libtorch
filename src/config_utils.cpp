@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 template <typename T> T _contains_or_empty(json j, char const *k) {
   return j.contains(k) ? j[k].get<T>() : T();
 }
@@ -73,3 +75,5 @@ TransformersAddedTokens read_transformers_added_tokens(ifstream &fd) {
                                     : added_tokens.get<vector<string>>()};
   return at;
 }
+
+}; // namespace hflt

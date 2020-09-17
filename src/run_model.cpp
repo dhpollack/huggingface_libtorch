@@ -1,14 +1,29 @@
 #include "run_model.h"
-#include "dataset_classification.h"
-#include "processors.h"
-#include "tokenizer_albert.h"
-#include "transformer_stack.h"
+#include "hflt.h"
+#include "version.h"
 
 using namespace std;
 using namespace torch;
+using namespace hflt;
+
+struct Options {
+  string model_path;
+  string dataset_path;
+};
+STRUCTOPT(Options, model_path, dataset_path);
 
 int main(int argc, char *argv[]) {
   // get cli args and check if files exist
+  Options options;
+  try {
+    options =
+        structopt::app("hflt_bin", PROJECT_VER).parse<Options>(argc, argv);
+  } catch (structopt::exception &e) {
+    cout << e.what() << endl;
+    cout << e.help() << endl;
+    return -1;
+  }
+  /*
   if (argc != 3) {
     string pn(argv[0]);
     string pn_nopath = pn.substr(pn.find_last_of("/\\") + 1);
@@ -19,14 +34,17 @@ int main(int argc, char *argv[]) {
          << endl;
     return -1;
   }
+  */
   // set some variables
   const long MAXIMUM_SEQUENCE_LENGTH = 128;
   const int BATCH_SIZE = 64;
   Device device(torch::cuda::is_available() ? "cuda" : "cpu");
   // create variables needed from cli args
-  string pretrained_dir(argv[1]);
+  // string pretrained_dir(argv[1]);
+  string pretrained_dir(options.model_path);
   string traced_model_path = pretrained_dir + "/traced_albert.pt";
-  string ds_file_path(argv[2]);
+  // string ds_file_path(argv[2]);
+  string ds_file_path(options.dataset_path);
 
   // create dataset and dataloader
   // auto sampler = data::samplers::SequentialSampler;
@@ -61,28 +79,28 @@ int main(int argc, char *argv[]) {
   for (auto &mb : *dl) {
     // cout << "Batch Size: " << mb.input_ids.sizes() << endl;
     // capture labels for metrics
-    labels_vec.push_back(mb.label);
+    labels_vec.emplace_back(mb.label);
     // prepare input tensors for jit'ed model
     auto token_ids = mb.input_ids;
     auto attention_masks = mb.attention_mask;
     auto token_type_ids = mb.token_type_ids;
     auto position_ids = mb.position_ids;
     vector<jit::IValue> inputs;
-    inputs.push_back(token_ids.to(device));
-    inputs.push_back(attention_masks.to(device));
-    inputs.push_back(token_type_ids.to(device));
-    inputs.push_back(position_ids.to(device));
+    inputs.emplace_back(token_ids.to(device));
+    inputs.emplace_back(attention_masks.to(device));
+    inputs.emplace_back(token_type_ids.to(device));
+    inputs.emplace_back(position_ids.to(device));
     // do inference and return results as a tuple
     auto out = model.forward(inputs).toTuple();
     // capture prediction log likelihoods for metrics
-    preds_vec.push_back(out->elements()[0].toTensor().to(Device("cpu")));
+    preds_vec.emplace_back(out->elements()[0].toTensor().to(Device("cpu")));
   }
   // concatenate predictions and get most likely prediction
   Tensor preds = cat(preds_vec, 0).argmax(1);
   // concatenate labels
   Tensor labels = cat(labels_vec, 0).flatten();
   // calculate the number of correct predictions and total predictions
-  float correct = preds.eq(labels).sum().item<float>();
+  auto correct = preds.eq(labels).sum().item<float>();
   float total = preds.size(0);
   // report accuracy
   cout << "Acc: " << correct / total << endl;

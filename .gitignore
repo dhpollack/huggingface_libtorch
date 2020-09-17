@@ -43,5 +43,8 @@ data/
 models/*
 third_party/*
 
+# python tools folder
+.venv
+
 # dev environmental variables
 dev.env

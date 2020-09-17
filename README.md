@@ -74,6 +74,12 @@ ctest -VV
 src/hflt ../models/sst2_trained ../data/SST-2/dev.tsv
 ```
 
+```sh
+# or use ninja
+cmake -GNinja ..
+cmake --build .
+```
+
 ## too lazy to install...
 
 [colab notebook with GPU](https://colab.research.google.com/drive/1TFZbXhiGBtcWVH3ir9Hb1gLGcJyxzTNS)
@@ -91,4 +97,16 @@ git clone https://github.com/huggingface/transformers.git
 python transformers/examples/run_glue.py --task_name sst-2 --data_dir data/SST-2 --model_type albert --model_name_or_path albert-base-v1 --save_steps 5000 --output_dir output --do_train --do_eval --evaluate_during_training --per_gpu_train_batch_size 32 --overwrite_output_dir
 # multi-gpu training
 NUM_GPUS=$(nvidia-smi -L | wc -l) python -m torch.distributed.launch --nproc_per_node ${NUM_GPUS} transformers/examples/run_glue.py --task_name sst-2 --data_dir data/SST-2 --model_type albert --model_name_or_path albert-base-v1 --save_steps 5000 --output_dir output --do_train --do_eval --evaluate_during_training --per_gpu_train_batch_size 32 --overwrite_output_dir
+```
+
+## Formatting and Linting
+
+```
+# lint c++
+cmake -DDO_CLANG_TIDY=ON ..
+cmake --build .
+# format c++
+clang-format -i src/*.cpp src/*.h test/*.h test/.cpp
+# lint python
+black ...
 ```

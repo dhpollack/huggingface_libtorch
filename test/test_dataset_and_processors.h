@@ -2,14 +2,16 @@
 
 #include <torch/torch.h>
 
-#include "gtest/gtest.h"
+#include "catch2/catch.hpp"
 #include "src/dataset_classification.h"
 #include "src/dataset_qa.h"
 #include "src/processors.h"
 
+using namespace hflt;
+
 std::string pretrained_dir = "models/sst2_trained";
 
-TEST(datasetprocessorsTest, tokenizerbasetests) {
+TEST_CASE("Test SST2 Dataset", "[datasets]") {
   using psfn =
       std::pair<std::string, std::function<std::vector<TransformerExample>(
                                  const std::string)>>;
@@ -21,25 +23,27 @@ TEST(datasetprocessorsTest, tokenizerbasetests) {
     size_t num_examples = ds.size().value();
     auto examples = ds.examples();
     auto ex = examples[0];
-    EXPECT_EQ(num_examples, 9);
-    EXPECT_EQ(ex.guid, "0");
-    EXPECT_EQ(ex.text_a, "it 's a charming and often affecting journey . ");
-    EXPECT_EQ(ex.text_b, "");
-    EXPECT_EQ(ex.label, "1");
+    REQUIRE(num_examples == 9);
+    REQUIRE(ex.guid == "0");
+    REQUIRE(ex.text_a == "it 's a charming and often affecting journey . ");
+    REQUIRE(ex.text_b == "");
+    REQUIRE(ex.label == "1");
   }
 }
 
 std::string squad_data_path("data/SQuAD/dev-v2.0.json");
 
-TEST(datasetprocessorsTest, qatests) {
-  TransformerQADS<TokenizerAlbert, SquadExample> ds(pretrained_dir, 384, readSquadExamples, squad_data_path);
+TEST_CASE("Test SQuAD2 Dataset", "[datasets]") {
+  TransformerQADS<TokenizerAlbert, SquadExample> ds(
+      pretrained_dir, 384, readSquadExamples, squad_data_path);
   std::vector<SquadExample> examples = ds.examples();
-  EXPECT_EQ(examples.size(), 11873);
+  REQUIRE(examples.size() == 11873);
   std::cout << "Squad Examples: " << examples.size() << std::endl;
   std::cout << "Squad DS size(): " << ds.size().value() << std::endl;
-  
-  auto dl = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
-      std::move(ds), 16);
+
+  auto dl =
+      torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
+          std::move(ds), 16);
   size_t i = 0;
   for (auto &_mb : *dl) {
     ++i;

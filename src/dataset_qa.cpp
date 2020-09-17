@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 // Constructor
 template <typename TokenizerType, typename ExampleType, typename FeaturesType>
 TransformerQADS<TokenizerType, ExampleType, FeaturesType>::TransformerQADS(
@@ -60,14 +62,20 @@ template <typename TokenizerType, typename ExampleType, typename FeaturesType>
 FeaturesType
 TransformerQADS<TokenizerType, ExampleType, FeaturesType>::example_to_features(
     ExampleType &example, pair<size_t, size_t> &p_span) {
+  // google:
+  // https://github.com/google-research/bert/blob/master/extract_features.py
+  // huggingface:
+  // https://github.com/huggingface/transformers/blob/master/src/transformers/data/processors/squad.py#L91
+  // The Google version just converts examples to features, while the
+  // huggingface version creates a feature for each span
   auto opts_data = torch::TensorOptions().dtype(torch::kLong);
-  size_t max_len = static_cast<size_t>(msl_);
+  auto max_len = static_cast<size_t>(msl_);
   vector<int> q_tokens(example.q_tokens.begin(), example.q_tokens.end());
   q_tokens.insert(q_tokens.begin(), tokenizer_.cls_token_id());
-  q_tokens.push_back(tokenizer_.sep_token_id());
+  q_tokens.emplace_back(tokenizer_.sep_token_id());
   vector<int> p_tokens_span(example.p_tokens.begin() + p_span.first,
                             example.p_tokens.begin() + p_span.second);
-  p_tokens_span.push_back(tokenizer_.sep_token_id());
+  p_tokens_span.emplace_back(tokenizer_.sep_token_id());
   vector<long> tokens;
   tokens.insert(tokens.end(), q_tokens.begin(), q_tokens.end());
   tokens.insert(tokens.end(), p_tokens_span.begin(), p_tokens_span.end());
@@ -89,3 +97,5 @@ TransformerQADS<TokenizerType, ExampleType, FeaturesType>::example_to_features(
 
 template class TransformerQADS<TokenizerAlbert>;
 template class TransformerQADS<>;
+
+}; // namespace hflt

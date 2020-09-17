@@ -6,6 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+namespace hflt {
+
 using json = nlohmann::json;
 
 struct TransformersTokenizerConfig {
@@ -40,3 +42,5 @@ read_transformers_tokenizer_config(std::ifstream &fd);
 TransformersSpecialTokensMap
 read_transformers_special_tokens_map(std::ifstream &fd);
 TransformersAddedTokens read_transformers_added_tokens(std::ifstream &fd);
+
+}; // namespace hflt

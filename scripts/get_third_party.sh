@@ -9,10 +9,10 @@ SENTENCEPIECEURI="https://github.com/google/sentencepiece.git"
 LIBTORCHURI="https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.5.0%2Bcpu.zip"
 BOOSTURI="https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz"
 NLOHMANNURI="https://github.com/nlohmann/json.git"
+STRUCTOPTURI="https://github.com/p-ranav/structopt/archive/v0.1.0.tar.gz"
 
 echo "Installing sentencepiece, make sure you've installed the requirements, which on Ubuntu is:"
 echo "sudo apt-get install cmake build-essential pkg-config libgoogle-perftools-dev"
-
 git clone $SENTENCEPIECEURI
 cd sentencepiece
 mkdir -p build && cd build
@@ -31,15 +31,27 @@ rm libtorch.zip
 
 echo "installing nlohmann json..."
 git clone --depth 1 ${NLOHMANNURI}
-cd json
-mkdir build && cd build
-cmake -DJSON_BuildTests=OFF -DCMAKE_INSTALL_PREFIX=$(realpath ../../${THIRDPARTYLOCAL}) ..
-make install
-cd ..
+# cd json
+# mkdir build && cd build
+# cmake -DJSON_BuildTests=OFF -DCMAKE_INSTALL_PREFIX=$(realpath ../../${THIRDPARTYLOCAL}) ..
+# make install
+# cd ..
 
 
-#echo "installing boost"
-#wget $BOOSTURI -O boost.tar.gz
-#tar xzf boost.tar.gz
-#rm boost.tar.gz
+echo "installing structopt"
+wget $STRUCTOPTURI -O structopt.tar.gz
+tar xzf structopt.tar.gz
+rm structopt.tar.gz
+mv structopt-* structopt
+# cd structopt
+# mkdir build && cd build
+# cmake -DSTRUCTOPT_SAMPLES=OFF -DSTRUCTOPT_TESTS=OFF -DCMAKE_INSTALL_PREFIX=$(realpath ../../${THIRDPARTYLOCAL}) ..
+# make install
+# cd ..
+
+
+# echo "installing boost"
+# wget $BOOSTURI -O boost.tar.gz
+# tar xzf boost.tar.gz
+# rm boost.tar.gz
 

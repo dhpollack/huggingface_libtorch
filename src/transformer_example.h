@@ -3,6 +3,8 @@
 #include <string>
 #include <torch/types.h>
 
+namespace hflt {
+
 struct TransformerExample {
   std::string guid;
   std::string text_a;
@@ -44,3 +46,5 @@ struct TransformerFeatures {
   PositionIDType position_ids;
   LabelType label;
 };
+
+}; // namespace hflt

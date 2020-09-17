@@ -1,9 +1,11 @@
 #pragma once
+#include <sentencepiece_processor.h>
 
 #include "config_utils.h"
-#include "sentencepiece_processor.h"
 #include "tokenizer_base.h"
 #include "transformer_example.h"
+
+namespace hflt {
 
 class TokenizerAlbert : public TokenizerBase {
 public:
@@ -24,3 +26,5 @@ public:
 private:
   std::shared_ptr<sentencepiece::SentencePieceProcessor> processor_;
 };
+
+}; // namespace hflt

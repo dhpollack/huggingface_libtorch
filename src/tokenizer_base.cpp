@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 TokenizerBase::TokenizerBase(string &bos_token, string &eos_token,
                              string &unk_token, string &sep_token,
                              string &pad_token, string &cls_token,
@@ -37,7 +39,7 @@ vector<long> TokenizerBase::convert_tokens_to_ids(vector<string> &tokens) {
   /*
   for (string &t : tokens) {
     long id = token_to_id_fn(t);
-    ids.push_back(id);
+    ids.emplace_back(id);
   }
   */
   return ids;
@@ -129,3 +131,5 @@ template vector<string> TokenizerBase::tokenize<string>(string &);
 template vector<long>
 TokenizerBase::create_token_type_ids_from_sequences(vector<int> &,
                                                     vector<long> &);
+
+}; // namespace hflt

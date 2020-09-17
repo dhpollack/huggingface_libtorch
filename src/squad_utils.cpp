@@ -2,11 +2,19 @@
 
 using namespace std;
 
+namespace hflt {
+
 vector<SquadExample> readSquadExamples(const string &input_path) {
   ifstream ifs(input_path);
   return read_squad_examples(ifs, true);
 }
 
+/** Read SQuAD json into a vector of SquadExample structs
+ *
+ * based on:
+ * https://github.com/huggingface/transformers/blob/master/src/transformers/data/processors/squad.py#L625
+ *
+ */
 vector<SquadExample> read_squad_examples(ifstream &input_file,
                                          bool is_training) {
   json j;
@@ -18,26 +26,27 @@ vector<SquadExample> read_squad_examples(ifstream &input_file,
 
     for (auto &entry : j["data"]) {
       for (auto &paragraph : entry["paragraphs"]) {
-        string paragraph_text = paragraph["context"].get<string>();
+        auto paragraph_text = paragraph["context"].get<string>();
         for (auto &qa : paragraph["qas"]) {
-          string qas_id = qa["id"].get<string>();
-          string question_text = qa["question"].get<string>();
+          auto qas_id = qa["id"].get<string>();
+          auto question_text = qa["question"].get<string>();
           int start_position = -1;
           string orig_answer_text;
-          bool is_impossible = false;
+          auto is_impossible = qa.contains("is_impossible")
+                                   ? qa["is_impossible"].get<bool>()
+                                   : false;
           if (is_training) {
-            is_impossible = qa.contains("is_impossible")
-                                ? qa["is_impossible"].get<bool>()
-                                : false;
             if (!is_impossible) {
               orig_answer_text = qa["answers"][0]["text"].get<string>();
               start_position = qa["answers"][0]["answer_start"].get<int>();
             } // default values set to else statement
           }
+          // huggingface trims paragraph_text and removes extraneous whitespace
+          // to `doc_tokens`
           SquadExample example(qas_id, question_text, paragraph_text,
                                orig_answer_text, start_position, -1,
                                is_impossible);
-          examples.push_back(example);
+          examples.emplace_back(example);
         } // end qa
       }   // end paragraph
     }     // end element
@@ -47,12 +56,13 @@ vector<SquadExample> read_squad_examples(ifstream &input_file,
 
 template <typename T>
 vector<pair<size_t, size_t>>
-add_tokens_to_examples(vector<SquadExample> &examples, T tokenizer_,
-                       long msl_) {
+add_tokens_to_examples(vector<SquadExample> &examples, T tokenizer_, long msl_,
+                       size_t doc_stride, size_t max_query_length,
+                       size_t num_special_tokens) {
   // TODO find answer and use variables related to this
-  const size_t doc_stride = 128;
-  const size_t max_query_length = 64;
-  const size_t num_special_tokens = 3;
+  // const size_t doc_stride = 128;
+  // const size_t max_query_length = 64;
+  // const size_t num_special_tokens = 3;
   vector<pair<size_t, size_t>> p_spans;
   size_t i = 0;
   for (auto &ex : examples) {
@@ -69,7 +79,7 @@ add_tokens_to_examples(vector<SquadExample> &examples, T tokenizer_,
     }
     // insert special tokens into question
     // q_tokens.insert(q_tokens.begin(), tokenizer_.cls_token_id());
-    // q_tokens.push_back(tokenizer_.sep_token_id());
+    // q_tokens.emplace_back(tokenizer_.sep_token_id());
     vector<int> p_tokens = tokenizer_.template tokenize<int>(ex.paragraph_text);
     vector<int> a_tokens =
         tokenizer_.template tokenize<int>(ex.orig_answer_text);
@@ -100,6 +110,10 @@ add_tokens_to_examples(vector<SquadExample> &examples, T tokenizer_,
 }
 
 template vector<pair<size_t, size_t>>
-add_tokens_to_examples(vector<SquadExample> &, TokenizerBase, long);
+add_tokens_to_examples(vector<SquadExample> &, TokenizerBase, long, size_t,
+                       size_t, size_t);
 template vector<pair<size_t, size_t>>
-add_tokens_to_examples(vector<SquadExample> &, TokenizerAlbert, long);
+add_tokens_to_examples(vector<SquadExample> &, TokenizerAlbert, long, size_t,
+                       size_t, size_t);
+
+}; // namespace hflt

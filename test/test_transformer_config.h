@@ -1,18 +1,20 @@
 #pragma once
 
-#include "gtest/gtest.h"
+#include "catch2/catch.hpp"
 #include "src/config_utils.h"
 
-TEST(transformerconfigTest, read_pretrained) {
+using namespace hflt;
+
+TEST_CASE("Test Transformer Read Config", "[config]") {
   const char *pretrained_dir = "models/sst2_trained";
   auto configs = read_transformers_pretrained(pretrained_dir);
-  EXPECT_EQ(configs.tokenizer_config.do_lower_case, false);
-  EXPECT_EQ(configs.tokenizer_config.init_inputs, std::vector<std::string>({}));
-  EXPECT_EQ(configs.tokenizer_config.max_len, 512);
-  EXPECT_EQ(configs.special_tokens_map.cls_token, "[CLS]");
-  EXPECT_EQ(configs.special_tokens_map.mask_token, "[MASK]");
-  EXPECT_EQ(configs.special_tokens_map.pad_token, "<pad>");
-  EXPECT_EQ(configs.special_tokens_map.sep_token, "[SEP]");
-  EXPECT_EQ(configs.special_tokens_map.unk_token, "<unk>");
-  EXPECT_EQ(configs.added_tokens.added_tokens.size(), 0);
+  REQUIRE(configs.tokenizer_config.do_lower_case == false);
+  REQUIRE(configs.tokenizer_config.init_inputs == std::vector<std::string>({}));
+  REQUIRE(configs.tokenizer_config.max_len == 512);
+  REQUIRE(configs.special_tokens_map.cls_token == "[CLS]");
+  REQUIRE(configs.special_tokens_map.mask_token == "[MASK]");
+  REQUIRE(configs.special_tokens_map.pad_token == "<pad>");
+  REQUIRE(configs.special_tokens_map.sep_token == "[SEP]");
+  REQUIRE(configs.special_tokens_map.unk_token == "<unk>");
+  REQUIRE(configs.added_tokens.added_tokens.size() == 0);
 }

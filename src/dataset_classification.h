@@ -14,6 +14,8 @@
 #include "tokenizer_base.h"
 #include "transformer_example.h"
 
+namespace hflt {
+
 template <typename TokenizerType = TokenizerBase,
           typename TransformerSingleExample = TransformerExample,
           typename TransformerSingleFeatures = TransformerFeatures<>>
@@ -59,3 +61,5 @@ private:
   std::vector<TransformerSingleExample> examples_;
   long msl_; // maximum sequence length
 };
+
+}; // namespace hflt

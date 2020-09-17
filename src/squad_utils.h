@@ -13,6 +13,8 @@
 #include "tokenizer_base.h"
 #include "transformer_example.h"
 
+namespace hflt {
+
 using json = nlohmann::json;
 
 struct SquadExample {
@@ -39,7 +41,12 @@ struct SquadExample {
 std::vector<SquadExample> readSquadExamples(const std::string &input_path);
 std::vector<SquadExample> read_squad_examples(std::ifstream &input_file,
                                               bool is_training);
+
 template <typename TokenizerType>
 std::vector<std::pair<size_t, size_t>>
 add_tokens_to_examples(std::vector<SquadExample> &examples,
-                       TokenizerType tokenizer_, long msl_);
+                       TokenizerType tokenizer_, long msl_,
+                       size_t doc_stride = 128, size_t max_query_length = 64,
+                       size_t num_special_tokens = 3);
+
+}; // namespace hflt

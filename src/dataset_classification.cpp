@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 // Constructor
 template <typename TokenizerType, typename ExampleType, typename FeaturesType>
 TransformerClassificationDS<TokenizerType, ExampleType, FeaturesType>::
@@ -58,3 +60,5 @@ TransformerClassificationDS<TokenizerType, ExampleType, FeaturesType>::
 
 template class TransformerClassificationDS<TokenizerAlbert>;
 template class TransformerClassificationDS<>;
+
+}; // namespace hflt

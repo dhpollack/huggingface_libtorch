@@ -1,2 +1,4 @@
 -I/home/david/.local/libtorch/include/torch/csrc/api/include
 -I/home/david/.local/libtorch/include
+-I/home/david/Progamming/repos/dhpollack/huggingface_libtorch/third_party/local/include
+-I/home/david/Progamming/repos/dhpollack/huggingface_libtorch/third_party/structopt/include

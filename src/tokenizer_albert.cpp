@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace hflt {
+
 shared_ptr<sentencepiece::SentencePieceProcessor>
 load_spmodel(const char *sppath) {
   shared_ptr<sentencepiece::SentencePieceProcessor> sp(
@@ -54,9 +56,9 @@ TransformerFeatures<> TokenizerAlbert::encode(string &text_a, string &text_b,
                      truncation_strategy, stride);
   // add in special tokens
   tis_int_a.insert(tis_int_a.begin(), processor_->PieceToId(cls_token));
-  tis_int_a.push_back(processor_->PieceToId(sep_token));
+  tis_int_a.emplace_back(processor_->PieceToId(sep_token));
   if (!tis_int_b.empty()) {
-    tis_int_b.push_back(processor_->PieceToId(sep_token));
+    tis_int_b.emplace_back(processor_->PieceToId(sep_token));
   }
   // convert from int (sentencepiece type) to long (torch type)
   vector<long> tis;
@@ -106,3 +108,5 @@ int TokenizerAlbert::pad_token_id() { return processor_->PieceToId(pad_token); }
 
 template vector<int> TokenizerAlbert::tokenize(string &);
 template vector<string> TokenizerAlbert::tokenize(string &);
+
+}; // namespace hflt
